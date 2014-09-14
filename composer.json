@@ -1,0 +1,21 @@
+{
+	"name": "wp_themety/core",
+	"description": "Wordpress tools.",
+	"keywords": ["wordpress"],
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Alexander Cerleniuk",
+			"email": "sano1982@gmail.com"
+		}
+	],
+	"require": {
+		"php": ">=5.4.0",
+	},
+	"autoload": {
+		"psr-0": {
+			"Themety": "src"
+		}
+	},
+	"minimum-stability": "dev"
+}
