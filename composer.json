@@ -19,7 +19,6 @@
   },
   "minimum-stability": "dev",
   "scripts": {
-    "wp_themety": "Themety\\Tasks::manager",
-    "post-create-project-cmd": "Themety\\Task\\Install::install"
+    "wp_themety": "Themety\\Tasks::manager"
   }
 }

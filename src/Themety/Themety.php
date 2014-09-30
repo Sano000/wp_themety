@@ -26,7 +26,6 @@ class Themety
     {
 
         $o = array_merge(array(
-            'basePath' => ABSPATH,
             'appPath' => ABSPATH . 'wp-app/',
             'templateUri' => get_template_directory_uri(),
             ), $settings);
