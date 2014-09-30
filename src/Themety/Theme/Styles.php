@@ -21,7 +21,7 @@ class Styles extends Base {
      */
     public function onWpEnqueueScripts()
     {
-        $options = Themety::get('styles');
+        $options = Themety::get('theme', 'styles', array());
         foreach ($options as $handle => $values) {
             $data = $this->parseItem($handle, $values);
             if ($data && in_array($data['zone'], array('frontend', 'both'))) {

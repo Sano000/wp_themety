@@ -45,8 +45,8 @@ class Themety
         }
 
         $modules = $themety->get('modules');
-        $modules || ($modules = array());
-        foreach ($modules as $class => $params) {
+        $modules || ($modules = array('autoload' => array()));
+        foreach ($modules['autoload'] as $class => $params) {
             if (is_numeric($class)) {
                $class = $params;
                $params = null;

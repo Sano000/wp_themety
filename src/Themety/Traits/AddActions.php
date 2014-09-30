@@ -2,7 +2,7 @@
 
 namespace Themety\Traits;
 
-use Themety;
+use Themety\Themety;
 
 
 trait AddActions {

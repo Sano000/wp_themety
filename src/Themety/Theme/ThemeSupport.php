@@ -9,7 +9,7 @@ class ThemeSupport extends Base {
 
     public function __construct()
     {
-        $options = Themety::get('theme_support');
+        $options = Themety::get('theme', 'theme_support', array());
         foreach ($options as $key => $value) {
             if (is_numeric($key)) {
                 add_theme_support($value);

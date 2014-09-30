@@ -19,7 +19,7 @@ class Sidebar extends Base {
      */
     public function onWidgetsInit()
     {
-        $options = Themety::get('sidebars');
+        $options = Themety::get('theme', 'sidebars', array());
         foreach ($options as $key => $values) {
             $data = $this->prepareItem($key, $values);
             register_sidebar($data);

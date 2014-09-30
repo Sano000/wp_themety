@@ -21,7 +21,7 @@ class Scripts extends Base {
      */
     public function onWpEnqueueScripts()
     {
-        $options = Themety::get('scripts');
+        $options = Themety::get('theme', 'scripts', array());
         foreach ($options as $handle => $values) {
             $jsData = $this->parseItem($handle, $values);
             if ($jsData && in_array($jsData['zone'], array('frontend', 'both'))) {
@@ -84,7 +84,7 @@ class Scripts extends Base {
             ), $values);
 
         if (!empty($values['src']) && !preg_match('/^(http|https|\/)/i', $values['src'])) {
-            $values['src'] = Themety::get('templateUri') . '/' . $values['src'];
+            $values['src'] = Themety::get('core', 'templateUri') . '/' . $values['src'];
         }
 
         if (!empty($values['deps']) && !is_array($values['deps'])) {

@@ -19,7 +19,7 @@ class ImageSizes extends Base {
      */
     public function onAfterSetupTheme()
     {
-        $options = Themety::get('image_sizes');
+        $options = Themety::get('theme', 'image_sizes', array());
         foreach ($options as $key => $size) {
             if ($size) {
                 array_unshift($size, $key);

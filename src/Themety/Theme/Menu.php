@@ -19,7 +19,7 @@ class Menu extends Base {
      */
     public function onInit()
     {
-        $options = Themety::get('menu');
+        $options = Themety::get('theme', 'menus', array());
         $options && register_nav_menus($options);
     }
 

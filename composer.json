@@ -1,21 +1,25 @@
 {
-	"name": "wp_themety/core",
-	"description": "Wordpress tools.",
-	"keywords": ["wordpress"],
-	"license": "MIT",
-	"authors": [
-		{
-			"name": "Alexander Cerleniuk",
-			"email": "sano1982@gmail.com"
-		}
-	],
-	"require": {
-		"php": ">=5.4"
-	},
-	"autoload": {
-		"psr-0": {
-			"Themety": "src"
-		}
-	},
-	"minimum-stability": "dev"
+  "name": "wp_themety/core",
+  "description": "Wordpress tools.",
+  "keywords": ["wordpress"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Alexander Cerleniuk",
+      "email": "sano1982@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.4"
+  },
+  "autoload": {
+    "psr-0": {
+      "Themety": "src"
+    }
+  },
+  "minimum-stability": "dev",
+  "scripts": {
+    "wp_themety": "Themety\\Tasks::manager",
+    "post-create-project-cmd": "Themety\\Task\\Install::install"
+  }
 }
