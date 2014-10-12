@@ -2,6 +2,8 @@
 
 namespace Themety;
 
+use Exception;
+
 class Themety
 {
     /**
@@ -10,6 +12,21 @@ class Themety
      * @var \Themety\Themety
      */
     public static $inst;
+
+
+    /**
+     * Module instances
+     *
+     * @var array
+     */
+    protected $modules = array();
+
+    /**
+     * Module aliases
+     *
+     * @var array
+     */
+    protected $aliases = array();
 
 
     /**
@@ -45,12 +62,9 @@ class Themety
 
         $modules = $themety->get('modules');
         $modules || ($modules = array('autoload' => array()));
-        foreach ($modules['autoload'] as $class => $params) {
-            if (is_numeric($class)) {
-               $class = $params;
-               $params = null;
-            }
-            new $class($params);
+        foreach ($modules['autoload'] as $item) {
+            is_array($item) || ($item = array($item));
+            call_user_func_array([$themety, 'loadModule'], $item);
         }
 
         return $themety;
@@ -63,6 +77,41 @@ class Themety
             self::$inst = new self;
         }
         return self::$inst;
+    }
+
+
+    /**
+     * Load Module
+     */
+    public function loadModule($class, $params = array())
+    {
+        if (!empty($this->modules[$class])) {
+            return $this->modules[$class];
+        }
+
+        $instance = new $class($params);
+        $this->modules[$class] = $instance;
+        return $instance;
+    }
+
+
+
+    public static function module($class)
+    {
+        $themety = self::app();
+        if (!empty($themety->modules[$class])) {
+            return $themety->modules[$class];
+        }
+
+        $autoload = $themety->get('modules', 'autoload', array());
+        foreach ($autoload as $item) {
+            is_array($item) || ($item = array($item));
+            if ($item[0] === $class) {
+                return call_user_func_array([$themety, 'loadModule'], $item);
+            }
+        }
+
+        throw new Exception("Class $class not found");
     }
 
 

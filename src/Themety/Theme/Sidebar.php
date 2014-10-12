@@ -2,6 +2,8 @@
 
 namespace Themety\Theme;
 
+use Exception;
+
 use Themety\Base;
 use Themety\Traits\AddActions;
 use Themety\Themety;
@@ -9,21 +11,47 @@ use Themety\Themety;
 class Sidebar extends Base {
     use AddActions;
 
-    public function init()
-    {
-        $this->bindAddActions();
-    }
+    /**
+     * Sidebar areas
+     *
+     * @var array
+     */
+    protected $sidebars = array();
 
     /**
-     * Register WP sidebars
+     * Is new sidebars can be registered
+     *
+     * @var booleadn
      */
-    public function onWidgetsInit()
+    protected $canBeRegistered = true;
+
+
+    public function __construct()
     {
+        $this->bindAddActions();
+
         $options = Themety::get('theme', 'sidebars', array());
         foreach ($options as $key => $values) {
-            $data = $this->prepareItem($key, $values);
-            register_sidebar($data);
+            $this->register($key, $values);
         }
+    }
+
+
+    /**
+     * Register sidebar
+     *
+     * @param string $key
+     * @param mixed $values
+     * @return \Themety\Theme\Sidebar
+     */
+    public function register($key, $values)
+    {
+        if (!$this->canBeRegistered) {
+            throw new Exception("Too late to register sidebar $key");
+        }
+
+        $this->sidebars[$key] = $this->prepareItem($key, $values);
+        return $this;
     }
 
 
@@ -45,6 +73,22 @@ class Sidebar extends Base {
             ), $values);
 
         return $values;
+    }
+
+
+    /**-----------------------------------------------------------------------------------------------------------------
+     *                                                                                              ACTIONS
+     -----------------------------------------------------------------------------------------------------------------*/
+
+    /**
+     * Register WP sidebars
+     */
+    public function onWidgetsInit()
+    {
+        foreach ($this->sidebars as $item) {
+            register_sidebar($item);
+        }
+        $this->canBeRegistered = false;
     }
 
 }

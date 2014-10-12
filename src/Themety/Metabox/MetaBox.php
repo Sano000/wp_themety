@@ -89,7 +89,7 @@ class MetaBox extends Base
         }
     }
 
-    public static function getDefaults($id, $data)
+    public static function getDefaults($id, array $data)
     {
         return array_merge(array(
             'id' => $id,
@@ -111,7 +111,7 @@ class MetaBox extends Base
     /**
      * Prepare Meta box
      */
-    public static function prepareMetaBoxItem($key, $data)
+    public static function prepareMetaBoxItem($key, array $data)
     {
         $result = self::getDefaults($key, $data);
 

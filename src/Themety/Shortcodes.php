@@ -2,6 +2,8 @@
 
 namespace Themety;
 
+use Exception;
+
 use Themety\Traits\AddActions;
 
 use Themety\Themety;
@@ -10,21 +12,45 @@ class Shortcodes extends Base
 {
     use AddActions;
 
+
+    /**
+     * Shortcodes as class => instance
+     *
+     * @var array
+     */
+    protected $shortcodes = array();
+
+
+    /**
+     * Is new shortcode class can be registrated
+     *
+     * @var boolean
+     */
+    protected $canBeRegistrated = true;
+
+
     public function __construct()
     {
         $this->bindAddActions();
+
+        foreach ($this->getSettings() as $className) {
+            $this->register($className);
+        }
     }
 
 
     /**
-     * Initialize shortcodes
+     * Register a shortcode class
+     *
+     * @param string $className
      */
-    public function onInit()
-    {
-        foreach ($this->getSettings() as $item) {
-            $class = $item;
-            new $class();
+    protected function register($className) {
+        if (!$this->canBeRegistrated) {
+            throw new Exception("Too late to register a new shorcode class: $className");
         }
+
+        $this->shortcodes[$className] = null;
+        return $this;
     }
 
 
@@ -65,5 +91,22 @@ class Shortcodes extends Base
             }
         }
         return $settings['classes'];
+    }
+
+
+
+    /**-----------------------------------------------------------------------------------------------------------------
+     *                                                                                                  ACTIONS
+     -----------------------------------------------------------------------------------------------------------------*/
+    /**
+     * Initialize shortcodes
+     */
+    public function onInit()
+    {
+        foreach ($this->shortcodes as $className => $value) {
+            $this->shortcodes[$className] = new $className();
+        }
+
+        $this->canBeRegistrated = false;
     }
 }

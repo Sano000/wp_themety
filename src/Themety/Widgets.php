@@ -2,6 +2,8 @@
 
 namespace Themety;
 
+use Exception;
+
 use Themety\Traits\AddActions;
 
 use Themety\Themety;
@@ -9,6 +11,22 @@ use Themety\Themety;
 class Widgets extends Base
 {
     use AddActions;
+
+
+    /**
+     * Widgets class names
+     *
+     * @var array
+     */
+    protected $widgets = array();
+
+
+    /**
+     * Is widget can be registered
+     *
+     * @var boolean
+     */
+    protected $canBeRegistrated = true;
 
     public function __construct()
     {
@@ -19,22 +37,34 @@ class Widgets extends Base
             'zone' => 'backend',
             'deps' => array('jquery', 'jquery-ui-sortable'),
         ));
-    }
 
-
-
-    public function onWidgetsInit()
-    {
         $settings = Themety::get('widgets');
-        $widgets = $this->parseItems($settings);
+        $widgets = $this->getSettings($settings);
 
         foreach ($widgets as $item) {
-            register_widget("Themety\Widget\\" . $item);
+            $this->register("Themety\Widget\\" . $item);
         }
     }
 
 
-    public function parseItems($data)
+
+    /**
+     * Register widget class name
+     *
+     * @param string $className
+     */
+    public function register($className)
+    {
+        if (!$this->canBeRegistrated) {
+            throw new Exception("Too late to register a new widget class: $className");
+        }
+
+        $this->widgets[] = $className;
+        return $this;
+    }
+
+
+    protected function getSettings(array $data)
     {
         $data['load'] = empty($data['load']) ? 'all' : $data['load'];
         $data['widgets'] = array();
@@ -61,5 +91,21 @@ class Widgets extends Base
             }
         }
         return $data['widgets'];
+    }
+
+
+    /**-----------------------------------------------------------------------------------------------------------------
+     *                                                                                                  ACTIONS
+     -----------------------------------------------------------------------------------------------------------------*/
+    /**
+     * Initialize shortcodes
+     */
+    public function onWidgetsInit()
+    {
+        foreach ($this->widgets as $className) {
+            register_widget($className);
+        }
+
+        $this->canBeRegistrated = false;
     }
 }
