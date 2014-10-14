@@ -45,6 +45,7 @@ class Themety
         $o = array_merge(array(
             'appPath' => ABSPATH . 'wp-app/',
             'templateUri' => get_template_directory_uri(),
+            'templatePath' => get_template_directory(),
             ), $settings);
 
         $themety = self::app();

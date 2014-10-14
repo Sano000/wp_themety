@@ -99,7 +99,7 @@ class Routes extends Base
      *                                                                                                  ACTIONS
      -----------------------------------------------------------------------------------------------------------------*/
 
-    public function onInit()
+    public function onInitP99()
     {
         $str = '';
         foreach ($this->rules as $item) {
@@ -124,7 +124,8 @@ class Routes extends Base
         if ($action && isset($this->rules[$action])) {
             $rule = $this->rules[$action];
             if (is_callable($rule['callback'])) {
-                call_user_func_array($rule['callback'], $wp->query_vars['themety_var']);
+                $arguments = is_array($wp->query_vars['themety_var']) ? $wp->query_vars['themety_var'] : array();
+                call_user_func_array($rule['callback'], $arguments);
             }
         }
     }
