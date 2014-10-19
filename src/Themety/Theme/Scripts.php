@@ -84,7 +84,7 @@ class Scripts extends Base {
      */
     protected function includeAll($zone = 'frontend') {
         foreach ($this->scripts as $jsData) {
-            if ($jsData && in_array($jsData['zone'], array('frontend', 'both'))) {
+            if ($jsData && in_array($jsData['zone'], array($zone, 'both'))) {
                 $this->includeScript($jsData);
             }
         }

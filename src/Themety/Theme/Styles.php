@@ -82,7 +82,7 @@ class Styles extends Base {
      */
     protected function includeAll($zone = 'frontend') {
         foreach ($this->styles as $data) {
-            if ($data && in_array($data['zone'], array('frontend', 'both'))) {
+            if ($data && in_array($data['zone'], array($zone, 'both'))) {
                 $this->includeStyle($data);
             }
         }
