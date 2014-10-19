@@ -11,7 +11,7 @@ class MetaBox extends Base
     /**
      * Get meta field value
      */
-    public function get($postId, $meta_name = '', $field_type = '')
+    public static function get($postId, $meta_name = '', $field_type = '')
     {
         if (!is_numeric($postId)) {
             $field_type = $meta_name;
