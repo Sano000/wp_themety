@@ -12,37 +12,46 @@ class Group extends Base
         'items' => array(),
     );
 
-    public function get($postId, $meta_name)
+
+    /**
+     * Get value
+     *
+     * @return array
+     */
+    public function get()
     {
         $result = array();
-        $metaboxes = Themety::app()->config->get('meta_boxes');
-        if (array_key_exists($meta_name, $metaboxes)) {
-            $keys = array_keys($metaboxes[$meta_name]['items']);
-            $values = get_post_custom($postId);
-            foreach ($keys as $key) {
-                $val = array_key_exists($key, $values) ? reset($values[$key]) : false;
-                $result[$key] = $metaboxes[$meta_name]['items'][$key]['multi'] ? unserialize($val) : $val;
-            }
+
+        $keys = array_keys($this->fieldData['items']);
+        foreach ($keys as $key) {
+            $result[$key] = $this->post->meta->{$key};
         }
 
         return $result;
     }
 
-    public function render($data, $value)
+
+    /**
+     * Render group field
+     *
+     * @return string
+     */
+    public function render()
     {
         $content = '';
-        if (!empty($data['items'])) {
-            foreach ($data['items'] as $key => $itemData) {
+        if (!empty($this->fieldData['items'] && is_array($this->fieldData['items']))) {
+            foreach ($this->fieldData['items'] as $key => $itemData) {
 
-                $itemData = MetaBox::getDefaults($key, $itemData);
-                $values = get_post_meta($data['post']->ID, $itemData['id'], true);
+                $itemData['id'] = $key;
+                $itemContent = $this->post->meta
+                    ->get($key)
+                    ->setFieldData($this->post, $itemData)
+                    ->render();
 
-                $class = 'Themety\Metabox\Field\\' . ucfirst($itemData['field_type']);
-                $box = new $class ();
 
                 $content .= $this->view('group', array(
                     'itemData' => $itemData,
-                    'renderedInput' => $box->render($itemData, $values),
+                    'renderedInput' => $itemContent,
                 ));
             }
         }

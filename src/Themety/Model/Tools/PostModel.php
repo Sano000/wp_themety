@@ -24,7 +24,7 @@ class PostModel {
     public function __construct(\WP_Post $post)
     {
         $this->model = $post;
-        $this->meta = new MetaBox($this->ID);
+        $this->meta = new MetaBox($this);
     }
 
     /**

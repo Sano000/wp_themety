@@ -2,8 +2,10 @@
 
 namespace Themety\Metabox;
 
+use Themety\Model\Base as Model;
 use Themety\Base;
 use Themety\Themety;
+use Themety\Model\Tools\PostModel;
 
 class MetaBox extends Base
 {
@@ -44,20 +46,23 @@ class MetaBox extends Base
         if (empty($data)) {
             return false;
         }
+        $postModel = new PostModel($post);
 
-        $data['post'] = $post;
+        $data['post'] = $postModel;
+        $content = '';
         if (!empty($data['field_type'])) {
-            $values = get_post_meta($post->ID, $data['id'], true);
-            $class = 'Themety\Metabox\Field\\' . ucfirst($data['field_type']);
-
-            $box = new $class ();
-            $content = $box->render($data, $values);
+            $content = $postModel->meta
+                ->get($data['id'])
+                ->setFieldData($postModel, $data)
+                ->render();
         }
         echo $content;
     }
 
     /**
      * Save meta data
+     *
+     * @todo make get globals class
      */
     public static function savePost($postId)
     {
@@ -68,23 +73,16 @@ class MetaBox extends Base
         if (empty($input['themety_meta_fields']) || !is_array($input['themety_meta_fields'])) {
             return;
         }
-        if (!current_user_can('edit_page', $post_id)) {
+        if (!current_user_can('edit_page', $postId)) {
             return;
         }
 
+        $post = Model::get($postId);
         foreach ($input['themety_meta_fields'] as $data) {
             $data = unserialize(base64_decode($data));
             $key = $data['id'];
-            $class = $data['class'];
             if (array_key_exists($key, $input)) {
-                $new = $input[$key];
-                $old = get_post_meta($postId, $key, is_array($new) ? false : true);
-                if (is_array($new)) {
-                    $new = array_values(array_filter($new));
-                }
-                if ($new !== $old) {
-                    update_post_meta($postId, $key, $new);
-                }
+                $post->meta->get($key)->save($input[$key]);
             }
         }
     }

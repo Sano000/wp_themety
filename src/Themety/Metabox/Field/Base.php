@@ -2,9 +2,12 @@
 
 namespace Themety\Metabox\Field;
 
-use Themety\Traits\View;
+use Exception;
 
-abstract class Base
+use Themety\Traits\View;
+use Themety\Themety;
+
+class Base
 {
     use View;
 
@@ -12,92 +15,163 @@ abstract class Base
     protected $templateName = '';
     protected $defaults = array();
 
-    public function __construct()
-    {
+    /**
+     * Field value
+     *
+     * @var mixed
+     */
+    protected $value;
 
+    /**
+     * Base post
+     *
+     * @var \Themety\Model\Tools\PostModel
+     */
+    protected $post;
+
+    /**
+     * Field data
+     */
+    protected $fieldData;
+
+
+    /**
+     * Constructor
+     *
+     * @param \Themety\Model\Tools\PostModel $post
+     * @param array $fieldData
+     */
+    public function __construct(\Themety\Model\Tools\PostModel $post = null, array $fieldData = array())
+    {
+        $post && $this->setFieldData($post, $fieldData);
     }
+
 
     /**
      * Get Meta Values
      */
-    public function get($postId, $meta_name)
+    public function get()
     {
-        $value = get_post_meta($postId, $meta_name, true);
+        $value = get_post_meta($this->post->ID, $this->fieldData['id'], true);
         return $value;
     }
 
+
+    /**
+     * Set field data - PostModel and field data array
+     *
+     * @param \Themety\Model\Tools\PostModel $post
+     * @param array $fieldData
+     * @return \Themety\Metabox\Field\Base
+     */
+    public function setFieldData(\Themety\Model\Tools\PostModel $post, array $fieldData)
+    {
+        if (empty($fieldData['id'])) {
+            throw new Exception("Check meta field configuration");
+        }
+        $this->post = $post;
+        $this->fieldData = $this->prepareData($fieldData);
+        $this->value = $this->get();
+        return $this;
+    }
+
+
+    /**
+     * Store field data into database
+     *
+     * @param mixed $value
+     */
+    public function save($value)
+    {
+//        $old = get_post_meta($postId, $key, is_array($new) ? false : true);
+//        $this->value
+        if (is_array($value)) {
+            $value = array_values(array_filter($value));
+        }
+        if ($value !== $this->value) {
+            update_post_meta($this->post->ID, $this->fieldData['id'], $value);
+        }
+    }
+
+
     /**
      * Render metabox
+     *
+     * @return string Html string
      */
-    public function render($data, $values)
+    public function render()
     {
-        $data = $this->prepareData($data);
-
         $content = '';
-        $content .= $this->renderBeforeInput($data);
-        $content .= $data['multi'] ? $this->renderMultiField($data, $values) : $this->renderSingleField($data, $values);
-        $content .= $this->renderAfterInput($data);
+        $content .= $this->renderBeforeInput();
+        $content .= $this->fieldData['multi'] ? $this->renderMultiField() : $this->renderSingleField();
+        $content .= $this->renderAfterInput();
         return $content;
     }
 
     /**
      * Render single field
      *
-     * @param array $data
-     * @param mixed $value
-     * @return string
+     * @return string Html string
      */
-    protected function renderSingleField($data, $value)
+    protected function renderSingleField()
     {
-        $attributes = $this->getAttributes($data);
-        $template = $this->templateName ? : strtolower(array_pop(explode('\\', get_class($this))));
+        $attributes = $this->getAttributes();
+        $template = $this->templateName ? : Themety::fromCamelCase(array_pop(explode('\\', get_class($this))));
 
-        $content = $this->view($template, compact('data', 'value', 'attributes') + $this->templateParams($data));
+        $content = $this->view($template, array_merge([
+            'data' => $this->fieldData,
+            'value' => $this->value,
+            'attributes' => $attributes
+        ], $this->templateParams()));
+
         return $content;
     }
 
     /**
      * Render several fields
      *
-     * @param array $data
-     * @param mixed $values
      * @return string
      */
-    protected function renderMultiField($data, $values)
+    protected function renderMultiField()
     {
         $content = '';
-        $items = empty($data['multi']['items']) ? count($values) : max(count($values), $data['multi']['items']);
+        $values = $this->value;
+        $items = empty($this->fieldData['multi']['items'])
+            ? count($values) : max(count($values), $this->fieldData['multi']['items']);
+
         for ($n = 0; $n < $items; $n++) {
+            $this->value = $values[$n];
             $content .= '<div class="input-item">';
-            $content .= $this->renderSingleField($data, $values[$n]);
+            $content .= $this->renderSingleField();
             $content .= '</div>';
         }
+
+        $this->value = $values;
         return $content;
     }
 
     /**
      * Render field header (and metadata)
      *
-     * @param array $data
      * @return string
      */
-    protected function renderBeforeInput($data)
+    protected function renderBeforeInput()
     {
         $content = '<input type="hidden" name="themety_meta_fields[]" '
-            . 'value="' . base64_encode(serialize(array('id' => $data['id'], 'class' => get_class($this)))) . '">';
-        if ($data['description']) {
-            $content .= '<label>' . $data['description'] . '</label>';
+            . 'value="' . base64_encode(serialize(array('id' => $this->fieldData['id'], 'class' => get_class($this)))) . '">';
+        if ($this->fieldData['description']) {
+            $content .= '<label>' . $this->fieldData['description'] . '</label>';
         }
         return $content;
     }
 
+
     /**
      * Render field footer
      *
-     * @param array $data
      * @return string
      */
-    protected function renderAfterInput($data)
+    protected function renderAfterInput()
     {
         return '';
     }
@@ -121,10 +195,9 @@ abstract class Base
     /**
      * Send additional parameters to template
      *
-     * @param array $data
      * @return array
      */
-    protected function templateParams($data)
+    protected function templateParams()
     {
         return array();
     }
@@ -132,13 +205,12 @@ abstract class Base
     /**
      * Render input attributes
      *
-     * @param array $data
      * @return string
      */
-    protected function getAttributes($data)
+    protected function getAttributes()
     {
         $result = array();
-        $attributes = $data['attributes'];
+        $attributes = $this->fieldData['attributes'];
         foreach ($attributes as $key => $value) {
             $result[] = $key . '=' . $value;
         }

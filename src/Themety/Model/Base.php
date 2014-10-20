@@ -7,7 +7,7 @@ use WP_Query;
 use Themety\Model\Tools\QueryBulder;
 use Themety\Model\Tools\Collection;
 
-abstract class Base {
+class Base {
 
      protected $modelClass = 'Themety\Model\Tools\PostModel';
 
@@ -75,24 +75,17 @@ abstract class Base {
 
 
     /**
-     * Get current model argument
-     *
-     * @param string $name
-     */
-    public function __get($name)
-    {
-
-    }
-
-
-    /**
      * Get
      *
-     * @param array $args query params
+     * @param mixed $args query params or post ID
      * @return self
      */
-    public static function get(array $args = array())
+    public static function get($args = null)
     {
+        if (is_numeric($args)) {
+            $args = ['p' => $args];
+        }
+
         $class = get_called_class();
         $model = new $class;
         return $model->query($args);
@@ -135,7 +128,16 @@ abstract class Base {
      */
     protected function updateQueryVars(array $args)
     {
+        // no limit
         isset($args['posts_per_page']) || $args['posts_per_page'] = -1;
+
+        // all public page types except "attachment"
+        if (!isset($args['post_type'])) {
+            $postTypes = get_post_types([
+                'public' => true
+            ]);
+            $args['post_type'] = array_diff($postTypes, ['attachment']);
+        }
 
         return array_merge($this->defaults, $args);
     }
