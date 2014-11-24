@@ -139,6 +139,8 @@ class Base {
             $args['post_type'] = array_diff($postTypes, ['attachment']);
         }
 
-        return array_merge($this->defaults, $args);
+        $args = array_merge($this->defaults, $args);
+        empty($this->defaults['post_type']) || ($args['post_type'] = $this->defaults['post_type']);
+        return $args;
     }
 }

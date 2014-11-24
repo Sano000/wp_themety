@@ -51,7 +51,7 @@ class Collection implements Iterator, Countable
     }
 
 
-    
+
     public function count()
     {
         return count($this->items);
@@ -90,5 +90,21 @@ class Collection implements Iterator, Countable
         $key = key($this->items);
         $var = ($key !== NULL && $key !== FALSE);
         return $var;
+    }
+
+
+    public function toArray()
+    {
+        $data = [];
+        foreach ($this as $model) {
+            $data[] = $model->toArray();
+        }
+        return $data;
+    }
+
+
+    public function __toString()
+    {
+        return json_encode($this->toArray());
     }
 }

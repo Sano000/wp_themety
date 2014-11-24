@@ -34,4 +34,32 @@ class PostModel {
     {
         return $this->model->$name;
     }
+
+
+    /**
+     * Convert to array
+     *
+     * @param array $keys
+     */
+    public function toArray()
+    {
+        $result = [];
+        foreach ($this->model as $key => $value) {
+            if ($keys) {
+                in_array($key, $keys) && $result[$key] = $value;
+            } else {
+                $result[$key] = $value;
+            }
+        }
+        return $result;
+    }
+
+
+    /**
+     * Convert to string
+     */
+    public function __toString()
+    {
+        return json_encode($this->toArray($keys));
+    }
 }
