@@ -1,0 +1,27 @@
+/* line 2, ../sass/admin-style.scss */
+.widgets-upload-image .preview {
+  float: none;
+}
+/* line 5, ../sass/admin-style.scss */
+.widgets-upload-image .preview .preview-item {
+  display: inline-block;
+}
+/* line 8, ../sass/admin-style.scss */
+.widgets-upload-image .preview .preview-item .controls {
+  text-align: center;
+}
+/* line 12, ../sass/admin-style.scss */
+.widgets-upload-image .preview .preview-item .preview-img {
+  width: 100px;
+  height: 100px;
+  background-size: cover;
+  background-position: 50% 50%;
+  margin: 5px 5px 3px 5px;
+}
+
+/* widgets */
+/* line 24, ../sass/admin-style.scss */
+.widgets-holder-wrap .preview-img {
+  width: 75px;
+  height: 75px;
+}

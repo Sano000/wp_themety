@@ -51,6 +51,8 @@ class PostModel {
                 $result[$key] = $value;
             }
         }
+
+        $result['meta'] = $this->meta->toArray();
         return $result;
     }
 

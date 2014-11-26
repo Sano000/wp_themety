@@ -32,10 +32,15 @@ class Widgets extends Base
     {
         $this->bindAddActions();
 
-        Themety::set('scripts', 'admin-themety-script', array(
+        Themety::module('Themety\Theme\Scripts')->register('admin-themety-script', array(
             'src' => $this->getAssetUri('js/admin-script.js', true),
             'zone' => 'backend',
             'deps' => array('jquery', 'jquery-ui-sortable'),
+        ));
+
+        Themety::module('Themety\Theme\Styles')->register('admin-themety-style', array(
+            'src' => $this->getAssetUri('css/admin-style.css', true),
+            'zone' => 'backend'
         ));
 
         $settings = Themety::get('widgets');

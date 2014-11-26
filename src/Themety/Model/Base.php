@@ -9,7 +9,17 @@ use Themety\Model\Tools\Collection;
 
 class Base {
 
-     protected $modelClass = 'Themety\Model\Tools\PostModel';
+    /**
+     * @var string
+     */
+    protected $modelClass = 'Themety\Model\Tools\PostModel';
+
+    /**
+     * Query logs
+     *
+     * @var array
+     */
+    protected static $logs = [];
 
 
      /**
@@ -103,6 +113,12 @@ class Base {
         $args = $this->updateQueryVars($args);
         $this->query = new WP_Query($args);
 
+        self::$logs[get_called_class()] = [
+            'request'       => $this->query->request,
+            'params'        => $args,
+            'found_posts'   => $this->query->found_posts,
+        ];
+
         $items = [];
         foreach($this->query->get_posts() as $post) {
             $items[] = new $this->modelClass($post);
@@ -131,6 +147,12 @@ class Base {
         // no limit
         isset($args['posts_per_page']) || $args['posts_per_page'] = -1;
 
+        // if p (ID) is set, search by all all content types
+        if (!isset($args['post_type']) && isset($args['p'])) {
+            $args['post_type'] = get_post_types();
+        }
+
+
         // all public page types except "attachment"
         if (!isset($args['post_type'])) {
             $postTypes = get_post_types([
@@ -142,5 +164,34 @@ class Base {
         $args = array_merge($this->defaults, $args);
         empty($this->defaults['post_type']) || ($args['post_type'] = $this->defaults['post_type']);
         return $args;
+    }
+
+
+    /**---------------------------------------------------------------------------------------------
+     *                                                                  LOGS
+     ---------------------------------------------------------------------------------------------*/
+    /**
+     * Show query log
+     *
+     * @param string    $field
+     * @param boolean   $thisClassOnly
+     * @return array
+     */
+    public static function getQueryLog($field = null, $thisClassOnly = false) {
+        $result = [];
+
+        foreach (self::$logs as $class => $value) {
+            if ($thisClassOnly && $class !== get_called_class()) {
+                continue;
+            }
+
+            if ($field && !isset($value[$field])) {
+                continue;
+            }
+
+            $result[] = $field ? $value[$field] : $value;
+        }
+
+        return $result;
     }
 }

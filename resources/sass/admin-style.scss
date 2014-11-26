@@ -1,0 +1,27 @@
+.widgets-upload-image {
+  .preview {
+    float: none;
+    
+    .preview-item {
+      display: inline-block;
+      
+      .controls {
+        text-align: center;
+      }
+      
+      .preview-img {
+        width: 100px;
+        height: 100px;
+        background-size: cover;
+        background-position: 50% 50%;
+        margin: 5px 5px 3px 5px;
+      }
+    }
+  }
+}
+
+/* widgets */
+.widgets-holder-wrap .preview-img {
+  width: 75px;
+  height: 75px;
+}

@@ -4,16 +4,18 @@ namespace Themety\Metabox\Field;
 
 use Exception;
 
-use Themety\Traits\View;
 use Themety\Themety;
+use SplObjectStorage;
+use Themety\Traits\View;
 
-class Base
+class Base extends SplObjectStorage
 {
     use View;
 
     protected $templatesPath = 'templates';
     protected $templateName = '';
     protected $defaults = array();
+    protected $itemClass = 'Themety\Metabox\SingleField';
 
     /**
      * Field value
@@ -43,17 +45,73 @@ class Base
      */
     public function __construct(\Themety\Model\Tools\PostModel $post = null, array $fieldData = array())
     {
-        $post && $this->setFieldData($post, $fieldData);
+        if ($post) {
+            $this->setFieldData($post, $fieldData);
+            $this->fill();
+        }
+    }
+
+    public function __get($name)
+    {
+        if ($name === 'value') {
+            return $this->current()->getValue();
+        }
+
+        return $this->current()->{$name};
+    }
+
+
+    public function __call($name, $arguments)
+    {
+        return call_user_func_array([$this->current(), $name], $arguments);
+    }
+
+    /**
+     * Fill collection
+     */
+    public function fill()
+    {
+        $value = get_post_meta($this->post->ID, $this->fieldData['id'], true);
+        is_array($value) || ($value = array($value));
+
+        foreach($value as $v) {
+            $item = new $this->itemClass($v);
+            $this->attach($item);
+        }
+        $this->rewind();
+
+        return $this;
     }
 
 
     /**
-     * Get Meta Values
+     * Convert value to string
+     *
+     * @return string
      */
-    public function get()
+    public function __toString()
     {
-        $value = get_post_meta($this->post->ID, $this->fieldData['id'], true);
-        return $value;
+        $value = $this->get();
+        return is_array($value) || is_object($value) ? json_encode($value) : $value;
+    }
+
+    /**
+     * To array convertation
+     *
+     * @return type
+     */
+    public function toArray()
+    {
+        if(!$this->fieldData['multi']) {
+            return $this->current()->getValue();
+        }
+
+        $result = [];
+        foreach ($this as $item) {
+            $result[] = $item->getValue();
+        }
+
+        return $result;
     }
 
 
@@ -71,7 +129,6 @@ class Base
         }
         $this->post = $post;
         $this->fieldData = $this->prepareData($fieldData);
-        $this->value = $this->get();
         return $this;
     }
 
@@ -120,7 +177,7 @@ class Base
 
         $content = $this->view($template, array_merge([
             'data' => $this->fieldData,
-            'value' => $this->value,
+            'value' => $this->current(),
             'attributes' => $attributes
         ], $this->templateParams()));
 
@@ -139,11 +196,12 @@ class Base
         $items = empty($this->fieldData['multi']['items'])
             ? count($values) : max(count($values), $this->fieldData['multi']['items']);
 
+        $this->rewind();
         for ($n = 0; $n < $items; $n++) {
-            $this->value = $values[$n];
             $content .= '<div class="input-item">';
             $content .= $this->renderSingleField();
             $content .= '</div>';
+            $this->next();
         }
 
         $this->value = $values;

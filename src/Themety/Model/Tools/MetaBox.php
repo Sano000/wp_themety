@@ -3,6 +3,7 @@
 namespace Themety\Model\Tools;
 
 use Themety\Themety;
+use Themety\Metabox\Field\Base as BaseField;
 
 class MetaBox {
 
@@ -44,7 +45,7 @@ class MetaBox {
      */
     public function __get($metaName)
     {
-        return $this->get($metaName)->get();
+        return $this->get($metaName);
     }
 
 
@@ -60,6 +61,21 @@ class MetaBox {
     }
 
 
+    /**
+     * Convert meta fields to array
+     */
+    public function toArray()
+    {
+        $result = [];
+
+        foreach ($this->fields as $key => $meta) {
+            $result[$key] = $meta instanceof BaseField ? $meta->toArray() : $meta;
+        }
+        return $result;
+    }
+    /**-------------------------------------------------------------------------------------------------
+     *                                                                           Utils
+     --------------------------------------------------------------------------------------------------*/
     /**
      * Initialize fields scheme
      */

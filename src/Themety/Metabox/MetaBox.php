@@ -78,6 +78,7 @@ class MetaBox extends Base
         }
 
         $post = Model::get($postId);
+
         foreach ($input['themety_meta_fields'] as $data) {
             $data = unserialize(base64_decode($data));
             $key = $data['id'];
