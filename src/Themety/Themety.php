@@ -44,7 +44,7 @@ class Themety
 
         $o = array_merge(array(
             'appPath' => ABSPATH . 'wp-app/',
-            'templateUri' => get_template_directory_uri(),
+            'templateUri' => get_bloginfo('stylesheet_directory'),
             'templatePath' => get_template_directory(),
             ), $settings);
 

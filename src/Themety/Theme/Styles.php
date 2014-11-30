@@ -110,7 +110,7 @@ class Styles extends Base {
             ), $values);
 
         if (!empty($values['src']) && !preg_match('/^(http|https|\/)/i', $values['src'])) {
-            $values['src'] = get_template_directory_uri() . '/' . $values['src'];
+            $values['src'] = Themety::get('core', 'templateUri') . '/' . $values['src'];
         }
 
         if (!empty($values['deps']) && !is_array($values['deps']) ) {
