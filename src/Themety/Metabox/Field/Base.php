@@ -140,8 +140,6 @@ class Base extends SplObjectStorage
      */
     public function save($value)
     {
-//        $old = get_post_meta($postId, $key, is_array($new) ? false : true);
-//        $this->value
         if (is_array($value)) {
             $value = array_values(array_filter($value));
         }
@@ -270,7 +268,7 @@ class Base extends SplObjectStorage
         $result = array();
         $attributes = $this->fieldData['attributes'];
         foreach ($attributes as $key => $value) {
-            $result[] = $key . '=' . $value;
+            $result[] = $key . '="' . $value . '"';
         }
         return implode(' ', $result);
     }

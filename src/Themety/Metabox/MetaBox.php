@@ -83,7 +83,7 @@ class MetaBox extends Base
             $data = unserialize(base64_decode($data));
             $key = $data['id'];
             if (array_key_exists($key, $input)) {
-                $post->meta->get($key)->save($input[$key]);
+                $post->meta->$key->save($input[$key]);
             }
         }
     }
