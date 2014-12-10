@@ -2,23 +2,23 @@
 
 namespace Themety\Metabox;
 
-class SingleField
+class MultiField
 {
     /**
      * Value
      *
      * @var mixed
      */
-    protected $value;
+    protected $values;
 
     /**
      * Constructor
      *
      * @param mixed $value
      */
-    public function __construct($value)
+    public function __construct($values)
     {
-        $this->value = $value;
+        $this->values = $values;
     }
 
     /**
@@ -28,12 +28,20 @@ class SingleField
      */
     public function getValue()
     {
-        return $this->value;
+        return $this->values;
+    }
+
+    public function __get($name)
+    {
+        if (isset($this->values[$name])) {
+            return $this->values[$name];
+        }
+        return null;
     }
 
     public function __toString()
     {
-        $value = $this->value ?: '';
+        $value = $this->values ?: '';
         return is_array($value) || is_object($value) ? json_encode($value) : $value;
     }
 }

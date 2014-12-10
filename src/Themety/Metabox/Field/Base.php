@@ -45,6 +45,8 @@ class Base extends SplObjectStorage
      */
     public function __construct(\Themety\Model\Tools\PostModel $post = null, array $fieldData = array())
     {
+        $this->fieldData = $fieldData;
+
         if ($post) {
             $this->setFieldData($post, $fieldData);
             $this->fill();
@@ -53,6 +55,8 @@ class Base extends SplObjectStorage
 
     public function __get($name)
     {
+        $this->valid() || $this->rewind();
+        
         if ($name === 'value') {
             return $this->current()->getValue();
         }
@@ -75,11 +79,23 @@ class Base extends SplObjectStorage
         is_array($value) || ($value = array($value));
 
         foreach($value as $v) {
-            $item = new $this->itemClass($v);
-            $this->attach($item);
+            $this->setValue($v);
         }
         $this->rewind();
 
+        return $this;
+    }
+
+    /**
+     * Add single value to collection
+     *
+     * @param mixed $value
+     * @return \Themety\Metabox\Field\Base
+     */
+    public function setValue($value)
+    {
+        $item = new $this->itemClass($value);
+        $this->attach($item);
         return $this;
     }
 
@@ -91,7 +107,10 @@ class Base extends SplObjectStorage
      */
     public function __toString()
     {
-        $value = $this->get();
+        $value = $this->current()->getValue();
+        if (!$value) {
+            return '';
+        }
         return is_array($value) || is_object($value) ? json_encode($value) : $value;
     }
 
@@ -244,7 +263,7 @@ class Base extends SplObjectStorage
                 $data['attributes'][$key] = $value;
             }
         }
-        $data['attributes']['name'] = $data['id'] . ( $data['multi'] ? '[]' : '' );
+        $data['attributes']['name'] = $this->getNameAttribute();
         return $data;
     }
 
@@ -271,5 +290,32 @@ class Base extends SplObjectStorage
             $result[] = $key . '="' . $value . '"';
         }
         return implode(' ', $result);
+    }
+
+
+    public function getData($key)
+    {
+        return isset($this->fieldData[$key]) ? $this->fieldData[$key] : null;
+    }
+
+    public function setData($key, $value)
+    {
+        $this->fieldData[$key] = $value;
+        return $this;
+    }
+
+
+    public function getNameAttribute()
+    {
+        return empty($this->fieldData['attributes']['name']) ?
+            ($this->fieldData['id'] . ($this->fieldData['multi'] ? '[]' : '')) :
+            $this->fieldData['attributes']['name'];
+    }
+
+
+    public function setNameAttribute($value)
+    {
+        $this->fieldData['attributes']['name'] = $value;
+        return $this;
     }
 }

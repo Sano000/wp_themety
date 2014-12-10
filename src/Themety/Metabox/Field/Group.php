@@ -4,14 +4,20 @@ namespace Themety\Metabox\Field;
 
 use Themety\Themety;
 use Themety\Metabox\MetaBox;
+use Themety\Metabox\MultiField;
 
 class Group extends Base
 {
+    protected $itemClass = 'Themety\Metabox\MultiField';
 
     protected $defaults = array(
         'items' => array(),
     );
 
+    /**
+     * @var array
+     */
+    protected $subfieldValues = [];
 
     /**
      * Get value
@@ -31,23 +37,36 @@ class Group extends Base
     }
 
 
+    public function fill()
+    {
+        $items = empty($this->fieldData['multi']['items']) ? 1 : $this->fieldData['multi']['items'];
+        for($n = 0; $n < $items; $n++) {
+            $data = [];
+            foreach ($this->fieldData['items'] as $key=>$value) {
+                $data[$key] = $this->getSubfield($key, $n);
+            }
+            $this->setValue($data);
+        }
+        $this->rewind();
+
+        return $this;
+    }
+
+
     /**
      * Render group field
      *
      * @return string
      */
-    public function render()
+    public function renderSingleField()
     {
         $content = '';
-        if (!empty($this->fieldData['items'] && is_array($this->fieldData['items']))) {
+        if (isset($this->fieldData['items']) && is_array($this->fieldData['items'])) {
             foreach ($this->fieldData['items'] as $key => $itemData) {
-
                 $itemData['id'] = $key;
-                $itemContent = $this->post->meta
-                    ->get($key)
-                    ->setFieldData($this->post, $itemData)
-                    ->render();
+                $field = $this->getSubfield($key);
 
+                $itemContent = $field->render();
 
                 $content .= $this->view('group', array(
                     'itemData' => $itemData,
@@ -57,5 +76,94 @@ class Group extends Base
         }
 
         return $content;
+    }
+
+    public function getSubfield($id, $key = null)
+    {
+        if (empty($this->subfieldValues[$id])) {
+            $value = get_post_meta($this->post->ID, $id, true);
+            is_array($value) || ($value = array($value));
+            $this->subfieldValues[$id] = $value;
+        }
+
+        $field = $this->getFieldObj($id, $this->fieldData['items'][$id]);
+        $field->removeAll($field);
+
+        $key || ($key = $this->key());
+        $fieldValue = isset($this->subfieldValues[$id][$key]) ? $this->subfieldValues[$id][$key] : null;
+
+        $field->setValue($fieldValue);
+        $field->rewind();
+
+        $field->setNameAttribute($field->getData('id') . '[]');
+
+        return $field;
+    }
+
+    public function toArray()
+    {
+        $result = [];
+        $keys = array_keys($this->fieldData['items']);
+
+        $this->rewind();
+        foreach($keys as $key) {
+            foreach($this as $n => $item) {
+                $result[$n][$key] = $this->getSubfield($key)->getValue();
+            }
+        }
+
+        return $result;
+    }
+
+    public function __toString()
+    {
+        return json_encode($this->toArray());
+    }
+
+    public function __get($name)
+    {
+        $this->valid() || $this->rewind();
+
+        if ($name === 'value') {
+            return $this->getValue();
+        }
+
+        $keys = array_keys($this->fieldData['items']);
+        if(in_array($name, $keys)) {
+            return $this->getSubfield($name);
+        }
+        return null;
+    }
+
+    public function getValue() {
+        $keys = array_keys($this->fieldData['items']);
+        $result = [];
+        foreach($keys as $key) {
+            foreach($this as $n => $item) {
+                $result[$key] = $this->getSubfield($key)->getValue();
+            }
+        }
+        return $result;
+    }
+
+
+    /**
+     * Get field object
+     *
+     * @param string $id
+     * @param array $fieldData
+     * @return \Themety\Model\Tools\Base
+     */
+    protected function getFieldObj($id, array $fieldData = array())
+    {
+
+        if (empty($fieldData)) {
+            $class = 'Themety\Metabox\Field\Base';
+        } else {
+            $class = 'Themety\Metabox\Field\\' . Themety::toCamelCase($fieldData['field_type'], true);
+        }
+        $fieldData['id'] = $id;
+
+        return new $class($this->post, $fieldData);
     }
 }

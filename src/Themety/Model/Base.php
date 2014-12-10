@@ -90,7 +90,7 @@ class Base {
      * @param mixed $args query params or post ID
      * @return self
      */
-    public static function get($args = null)
+    public static function get($args = array())
     {
         if (is_numeric($args)) {
             $args = ['p' => $args];
