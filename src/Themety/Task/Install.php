@@ -53,7 +53,7 @@ class Install extends Base
         foreach($objects as $name => $object){
 
             if(!in_array($object->getFilename(), array('.', '..'))) {
-                $relative = str_replace($sourcePath . "/", '', $name);
+                $relative = basename(str_replace($sourcePath . "/", '', $name));
                 $target = $installPath . '/' . $relative;
 
                 if (!file_exists($target) && is_dir($name)) {
