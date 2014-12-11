@@ -2,6 +2,8 @@
 
 namespace Themety\Task;
 
+define('DS', DIRECTORY_SEPARATOR);
+
 use Composer\Script\Event;
 use Exception;
 use RecursiveIteratorIterator;
@@ -53,8 +55,8 @@ class Install extends Base
         foreach($objects as $name => $object){
 
             if(!in_array($object->getFilename(), array('.', '..'))) {
-                $relative = basename(str_replace($sourcePath . "/", '', $name));
-                $target = $installPath . '/' . $relative;
+                $relative = basename(str_replace($sourcePath . DS, '', $name));
+                $target = $installPath . DS . $relative;
 
                 if (!file_exists($target) && is_dir($name)) {
                      mkdir($target, 0777, true);
