@@ -1,1 +1,1 @@
-<input type="number" value="<?php echo htmlspecialchars($value); ?>" <?php echo $attributes; ?> />
+<input type="number" value="<?php echo htmlspecialchars((string)$value); ?>" <?php echo $attributes; ?> />

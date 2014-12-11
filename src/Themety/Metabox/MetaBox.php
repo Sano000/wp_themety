@@ -81,6 +81,7 @@ class MetaBox extends Base
 
         foreach ($input['themety_meta_fields'] as $data) {
             $data = unserialize(base64_decode($data));
+
             $key = $data['id'];
             if (array_key_exists($key, $input)) {
                 $post->meta->$key->save($input[$key]);

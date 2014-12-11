@@ -29,7 +29,7 @@ Create/append composer.json file:
   },
   "scripts": {
     "wp_themety": "Themety\\Tasks::manager"
-  }  
+  }
 }
 ```
 
@@ -47,14 +47,14 @@ Then install WP Themety configs to **wp-app** directory:
 composer wp_themety install wp-app
 ```
 
-And in the final add autoload file to a theme *function.php** file
+And in the final add autoload file to a theme **functions.php** file
 
 
 ```
 # If Composer installed into a theme folder:
-require get_template_directory() . '/vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 Themety\Themety::init(array(
-    'appPath' => get_template_directory() . '/wp-app/'
+    'appPath' => __DIR__ . '/wp-app/'
 ));
 ```
 or
