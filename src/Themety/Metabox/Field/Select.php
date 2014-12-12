@@ -5,10 +5,10 @@ namespace Themety\Metabox\Field;
 class Select extends Base
 {
 
-    protected function templateParams($data)
+    protected function templateParams()
     {
-        $options = is_callable($data['options']) ?
-            call_user_func_array($data['options'], $data['options_params']) : $data['options'];
+        $options = is_callable($this->fieldData['options']) ?
+            call_user_func_array($this->fieldData['options'], $this->fieldData['options_params']) : $this->fieldData['options'];
         return array('options' => $options);
     }
 }
