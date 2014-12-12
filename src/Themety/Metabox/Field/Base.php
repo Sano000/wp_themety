@@ -147,7 +147,8 @@ class Base extends SplObjectStorage
             throw new Exception("Check meta field configuration");
         }
         $this->post = $post;
-        $this->fieldData = $this->prepareData($fieldData);
+        $this->fieldData = $fieldData;
+        $this->fieldData = $this->prepareData();
         return $this;
     }
 
@@ -254,17 +255,18 @@ class Base extends SplObjectStorage
     /**
      * Merge data with default values
      */
-    protected function prepareData($data)
+    protected function prepareData()
     {
+        $this->fieldData;
         $attributes = empty($this->defaults['attributes']) ? array() : $this->defaults['attributes'];
-        $data = array_merge($this->defaults, $data);
+        $this->fieldData = array_merge($this->defaults, $this->fieldData);
         foreach ($attributes as $key => $value) {
-            if (!array_key_exists($key, $data['attributes'])) {
-                $data['attributes'][$key] = $value;
+            if (!array_key_exists($key, $this->fieldData['attributes'])) {
+                $this->fieldData['attributes'][$key] = $value;
             }
         }
-        $data['attributes']['name'] = $this->getNameAttribute();
-        return $data;
+        $this->fieldData['attributes']['name'] = $this->getNameAttribute();
+        return $this->fieldData;
     }
 
     /**

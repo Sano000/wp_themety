@@ -12,9 +12,9 @@ class Image extends Base
         ),
     );
 
-    protected function renderMultiField($data, $values)
+    protected function renderMultiField()
     {
-        return parent::renderSingleField($data, $values);
+        return parent::renderSingleField();
     }
 
     public function toArray()
