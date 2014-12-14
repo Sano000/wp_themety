@@ -2,13 +2,11 @@
 
 namespace Themety\Content\Metabox\Field;
 
-use Themety\Themety;
-use Themety\Metabox\MetaBox;
-use Themety\Metabox\MultiField;
+use Themety\Facade\Themety;
 
 class Group extends BaseMetaField
 {
-    protected $itemClass = 'Themety\Metabox\MultiField';
+    protected $itemClass = 'Themety\Content\Metabox\MultiField';
 
     protected $defaults = array(
         'items' => array(),
@@ -156,14 +154,18 @@ class Group extends BaseMetaField
      */
     protected function getFieldObj($id, array $fieldData = array())
     {
-
         if (empty($fieldData)) {
-            $class = 'Themety\Metabox\Field\Base';
+            $alias = 'metabox.field.base';
         } else {
-            $class = 'Themety\Metabox\Field\\' . Themety::toCamelCase($fieldData['field_type'], true);
+            $alias = 'metabox.field.' . $fieldData['field_type'];
         }
         $fieldData['id'] = $id;
 
-        return new $class($this->post, $fieldData);
+        $field = Themety::make($alias);
+        $field->setPost($this->post);
+        $field->setFieldData($fieldData);
+        $field->fill();
+
+        return $field;
     }
 }

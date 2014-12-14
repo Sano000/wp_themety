@@ -5,8 +5,6 @@ namespace Themety;
 use Composer\Script\Event;
 use Exception;
 
-use Themety\Themety;
-
 class Tasks {
 
     protected $tasks = array();

@@ -2,8 +2,8 @@
 
 namespace Themety\Shortcodes;
 
-use Themety\Themety;
 use Themety\Traits\View;
+use Themety\Facade\Themety;
 
 abstract class BaseShortcode
 {

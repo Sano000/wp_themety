@@ -4,9 +4,6 @@ namespace Themety\Model\Tools;
 
 use Exception;
 
-use Themety\Themety;
-use Themety\Model\Base;
-
 class QueryBulder {
 
     /**

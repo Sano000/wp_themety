@@ -4,9 +4,9 @@ namespace Themety\Content\Metabox\Field;
 
 use Exception;
 
-use Themety\Themety;
 use SplObjectStorage;
 use Themety\Traits\View;
+use Themety\Facade\Themety;
 
 class BaseMetaField extends SplObjectStorage
 {
