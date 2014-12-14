@@ -2,13 +2,13 @@
 
 namespace Themety\Facade\Theme;
 
-use Themety\Facade\Base;
+use Illuminate\Support\Facades\Facade;
 
-class Sidebar extends Base {
+class Sidebar extends Facade {
 
      public static function getFacadeAccessor()
      {
-        return 'Themety\Theme\Sidebar';
+        return 'theme.sidebar';
      }
 
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace Themety\Metabox\Field;
+namespace Themety\Content\Metabox\Field;
 
 use Themety\Themety;
 use Themety\Metabox\MetaBox;
 use Themety\Metabox\MultiField;
 
-class Group extends Base
+class Group extends BaseMetaField
 {
     protected $itemClass = 'Themety\Metabox\MultiField';
 

@@ -2,11 +2,10 @@
 
 namespace Themety\Shortcodes;
 
+use Themety\Themety;
 use Themety\Traits\View;
 
-use Themety\Themety;
-
-abstract class Base
+abstract class BaseShortcode
 {
     use View;
 

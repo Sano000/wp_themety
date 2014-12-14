@@ -2,7 +2,7 @@
 
 namespace Themety\Model\Tools;
 
-use Themety\Model\Tools\MetaBox;
+use Themety\Facade\Themety;
 
 class PostModel {
 
@@ -24,7 +24,7 @@ class PostModel {
     public function __construct(\WP_Post $post)
     {
         $this->model = $post;
-        $this->meta = new MetaBox($this);
+        $this->meta = Themety::make('model.metabox', $this);
     }
 
     /**

@@ -7,7 +7,7 @@ use WP_Query;
 use Themety\Model\Tools\QueryBulder;
 use Themety\Model\Tools\Collection;
 
-class Base {
+class BaseModel {
 
     /**
      * @var string

@@ -1,8 +1,8 @@
 <?php
 
-namespace Themety\Metabox\Field;
+namespace Themety\Content\Metabox\Field;
 
-class Select extends Base
+class Select extends BaseMetaField
 {
 
     protected function templateParams()

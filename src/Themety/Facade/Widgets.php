@@ -2,11 +2,13 @@
 
 namespace Themety\Facade;
 
-class Widgets extends Base {
+use Illuminate\Support\Facades\Facade;
+
+class Widgets extends Facade {
 
      public static function getFacadeAccessor()
      {
-        return 'Themety\Widgets';
+        return 'widgets';
      }
 
 }

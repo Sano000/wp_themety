@@ -2,11 +2,13 @@
 
 namespace Themety\Facade;
 
-class Routes extends Base {
+use Illuminate\Support\Facades\Facade;
+
+class Routes extends Facade {
 
      public static function getFacadeAccessor()
      {
-        return 'Themety\Routes';
+        return 'routes';
      }
 
 }

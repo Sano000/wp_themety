@@ -3,14 +3,10 @@
 namespace Themety\Theme;
 
 use Exception;
+use Illuminate\Support\Facades\Config;
 
-use Themety\Base;
-use Themety\Traits\AddActions;
-
-use Themety\Themety;
-
-class Scripts extends Base {
-    use AddActions;
+class Scripts
+{
 
     /**
      * Scripts
@@ -27,28 +23,27 @@ class Scripts extends Base {
      */
     protected $canBeAdded = true;
 
-    public function __construct()
-    {
-        $this->bindAddActions();
 
-        $options = Themety::get('theme', 'scripts', array());
+    public function load()
+    {
+        $options = Config::get('theme.scripts', array());
         foreach ($options as $handle => $values) {
-            $this->register($handle, $values);
+            $this->add($handle, $values);
         }
     }
 
 
     /**
-     * Register script
+     * Add script
      *
      * @param string $handle
      * @param mixed $values
      * @return \Themety\Theme\Scripts
      */
-    public function register($handle, $values)
+    public function add($handle, $values)
     {
         if (!$this->canBeAdded) {
-            throw new Exception("Too late to register a script: $handle");
+            throw new Exception("Too late to add a script: $handle");
         }
 
         $this->scripts[$handle] = $this->parseItem($handle, $values);
@@ -57,9 +52,27 @@ class Scripts extends Base {
 
 
     /**
+     * Include all registered scripts
+     *
+     * @param string $zone
+     * @return \Themety\Theme\Scripts
+     */
+    public function register($zone = 'frontend') {
+        foreach ($this->scripts as $jsData) {
+            if ($jsData && in_array($jsData['zone'], array($zone, 'both'))) {
+                $this->registerScript($jsData);
+            }
+        }
+
+        $this->canBeAdded = false;
+        return $this;
+    }
+
+
+    /**
      * Include script
      */
-    protected function includeScript($jsData)
+    protected function registerScript($jsData)
     {
         wp_enqueue_script(
             $jsData['handle'],
@@ -72,23 +85,6 @@ class Scripts extends Base {
             is_callable($values) && ( $values = call_user_func($values));
             wp_localize_script($jsData['handle'], $param, $values);
         }
-        return $this;
-    }
-
-
-    /**
-     * Include all registered scripts
-     *
-     * @param string $zone
-     * @return \Themety\Theme\Scripts
-     */
-    protected function includeAll($zone = 'frontend') {
-        foreach ($this->scripts as $jsData) {
-            if ($jsData && in_array($jsData['zone'], array($zone, 'both'))) {
-                $this->includeScript($jsData);
-            }
-        }
-
         return $this;
     }
 
@@ -112,7 +108,7 @@ class Scripts extends Base {
             ), $values);
 
         if (!empty($values['src']) && !preg_match('/^(http|https|\/)/i', $values['src'])) {
-            $values['src'] = Themety::get('core', 'templateUri') . '/' . $values['src'];
+            $values['src'] = Config::get('templateUri') . '/' . $values['src'];
         }
 
         if (!empty($values['deps']) && !is_array($values['deps'])) {
@@ -121,31 +117,5 @@ class Scripts extends Base {
 
         $values['in_footer'] = empty($values['in_footer']) ? false : true;
         return $values;
-    }
-
-
-
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     *                                                                                                  ACTIONS
-     -----------------------------------------------------------------------------------------------------------------*/
-
-    /**
-     * Add script in a frontend side
-     */
-    public function onWpEnqueueScripts()
-    {
-        $this->includeAll('frontend');
-        $this->canBeAdded = false;
-    }
-
-
-    /**
-     * Add scripts in the admin side
-     */
-    public function onAdminEnqueueScripts()
-    {
-        $this->includeAll('backend');
-        $this->canBeAdded = false;
     }
 }

@@ -10,7 +10,13 @@
     }
   ],
   "require": {
-    "php": ">=5.4"
+    "php": ">=5.4",
+    "illuminate/container": "4.2.*",
+    "illuminate/support": "4.2.*",
+    "illuminate/http": "4.2.*",
+    "illuminate/config": "4.2.*",
+    "illuminate/filesystem": "4.2.*",
+    "illuminate/events": "4.2.*"
   },
   "autoload": {
     "psr-0": {

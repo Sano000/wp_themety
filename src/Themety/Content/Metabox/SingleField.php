@@ -1,24 +1,24 @@
 <?php
 
-namespace Themety\Metabox;
+namespace Themety\Content\Metabox;
 
-class MultiField
+class SingleField
 {
     /**
      * Value
      *
      * @var mixed
      */
-    protected $values;
+    protected $value;
 
     /**
      * Constructor
      *
      * @param mixed $value
      */
-    public function __construct($values)
+    public function __construct($value)
     {
-        $this->values = $values;
+        $this->value = $value;
     }
 
     /**
@@ -28,20 +28,12 @@ class MultiField
      */
     public function getValue()
     {
-        return $this->values;
-    }
-
-    public function __get($name)
-    {
-        if (isset($this->values[$name])) {
-            return $this->values[$name];
-        }
-        return null;
+        return $this->value;
     }
 
     public function __toString()
     {
-        $value = $this->values ?: '';
+        $value = $this->value ?: '';
         return is_array($value) || is_object($value) ? json_encode($value) : $value;
     }
 }

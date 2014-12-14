@@ -40,20 +40,6 @@ return array(
 
 
     /**
-     * Include dynamic stylesheet
-     *
-     *   show   : mixed boolean or callble - shows if true
-     */
-    'dynamic_styles' => array(
-        'theme-settings' => array(
-            'src' => 'css/theme-settings.css',
-            'file' => Themety\Themety::get('core', 'templateUri') . 'stylesheets/theme-settings.php',
-            'show' => true
-        )
-    ),
-
-
-    /**
      * Include javascript files
      *
      * Params:

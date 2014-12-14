@@ -3,14 +3,10 @@
 namespace Themety\Theme;
 
 use Exception;
+use Illuminate\Support\Facades\Config;
 
-use Themety\Base;
-use Themety\Traits\AddActions;
-use Themety\Themety;
-
-class ImageSizes extends Base {
-    use AddActions;
-
+class ImageSizes
+{
     /**
      * Image sizes
      *
@@ -26,28 +22,26 @@ class ImageSizes extends Base {
      */
     protected $canBeRegistered = true;
 
-    public function __construct()
+    public function load()
     {
-        $this->bindAddActions();
-
-        $options = Themety::get('theme', 'image_sizes', array());
+        $options = Config::get('theme.image_sizes', array());
         foreach ($options as $key => $params) {
-            $this->register($key, $params);
+            $this->add($key, $params);
         }
     }
 
 
     /**
-     * Register image size
+     * Add image size
      *
      * @param string $key
      * @param array $params
      * @return \Themety\Theme\ImageSizes
      */
-    public function register($key, array $params)
+    public function add($key, array $params)
     {
         if (!$this->canBeRegistered) {
-            throw new Exception("Too late to register image size: $key");
+            throw new Exception("Too late to add image size: $key");
         }
 
         array_unshift($params, $key);
@@ -56,13 +50,10 @@ class ImageSizes extends Base {
     }
 
 
-    /**-----------------------------------------------------------------------------------------------------------------
-     *
-     -----------------------------------------------------------------------------------------------------------------*/
     /**
-     * Add image sizes
+     * Add image sizes to WP
      */
-    public function onAfterSetupTheme()
+    public function register()
     {
         foreach ($this->imageSizes as $item) {
             call_user_func_array('add_image_size', $item);

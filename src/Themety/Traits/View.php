@@ -16,7 +16,7 @@ trait View
             $filename = $template;
         } else {
             $reflector = new ReflectionClass(get_class($this));
-            $classDir = $this->templatesBasePath ?: dirname($reflector->getFileName());
+            $classDir = isset($this->templatesBasePath) ? $this->templatesBasePath : dirname($reflector->getFileName());
             $templatePath = isset($this->templatesPath) ? $this->templatesPath : 'templates';
             $filename = $classDir . '/' . $templatePath . '/' . $template . '.tpl.php';
         }

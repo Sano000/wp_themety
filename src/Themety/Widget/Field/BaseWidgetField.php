@@ -4,7 +4,7 @@ namespace Themety\Widget\Field;
 
 use Themety\Traits\View;
 
-abstract class Base
+abstract class BaseWidgetField
 {
     use View;
 

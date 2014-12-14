@@ -1,10 +1,10 @@
 <?php
 
-namespace Themety\Metabox\Field;
+namespace Themety\Content\Metabox\Field;
 
 use Themety\Themety;
 
-class Post extends Base
+class Post extends BaseMetaField
 {
 
     protected function templateParams($data)

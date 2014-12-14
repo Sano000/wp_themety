@@ -2,13 +2,13 @@
 
 namespace Themety\Facade\Theme;
 
-use Themety\Facade\Base;
+use Illuminate\Support\Facades\Facade;
 
-class ImageSizes extends Base {
+class ImageSizes extends Facade {
 
      public static function getFacadeAccessor()
      {
-        return 'Themety\Theme\ImageSizes';
+        return 'theme.image_sizes';
      }
 
 }

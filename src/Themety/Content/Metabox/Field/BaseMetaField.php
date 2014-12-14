@@ -1,6 +1,6 @@
 <?php
 
-namespace Themety\Metabox\Field;
+namespace Themety\Content\Metabox\Field;
 
 use Exception;
 
@@ -8,14 +8,14 @@ use Themety\Themety;
 use SplObjectStorage;
 use Themety\Traits\View;
 
-class Base extends SplObjectStorage
+class BaseMetaField extends SplObjectStorage
 {
     use View;
 
     protected $templatesPath = 'templates';
     protected $templateName = '';
     protected $defaults = array();
-    protected $itemClass = 'Themety\Metabox\SingleField';
+    protected $itemClass = 'Themety\Content\Metabox\SingleField';
 
     /**
      * Field value
@@ -48,7 +48,8 @@ class Base extends SplObjectStorage
         $this->fieldData = $fieldData;
 
         if ($post) {
-            $this->setFieldData($post, $fieldData);
+            $this->setPost($post);
+            $this->setFieldData($fieldData);
             $this->fill();
         }
     }
@@ -56,7 +57,7 @@ class Base extends SplObjectStorage
     public function __get($name)
     {
         $this->valid() || $this->rewind();
-        
+
         if ($name === 'value') {
             return $this->current()->getValue();
         }
@@ -107,6 +108,10 @@ class Base extends SplObjectStorage
      */
     public function __toString()
     {
+        if (!$this->count()) {
+            return '';
+        }
+
         $value = $this->current()->getValue();
         if (!$value) {
             return '';
@@ -135,23 +140,57 @@ class Base extends SplObjectStorage
 
 
     /**
-     * Set field data - PostModel and field data array
+     * Set PostModel
      *
      * @param \Themety\Model\Tools\PostModel $post
+     * @return \Themety\Content\Metabox\Field\BaseMetaField
+     */
+    public function setPost(\Themety\Model\Tools\PostModel $post)
+    {
+        $this->post = $post;
+        return $this;
+    }
+
+    /**
+     * Set field data
+     *
      * @param array $fieldData
      * @return \Themety\Metabox\Field\Base
      */
-    public function setFieldData(\Themety\Model\Tools\PostModel $post, array $fieldData)
+    public function setFieldData(array $fieldData)
     {
         if (empty($fieldData['id'])) {
             throw new Exception("Check meta field configuration");
         }
-        $this->post = $post;
+
         $this->fieldData = $fieldData;
-        $this->fieldData = $this->prepareData();
+        $this->fieldData = array_replace_recursive($this->getDefaults(), $this->defaults, $this->fieldData);
+
+        if (!is_array($this->fieldData['post_type'])) {
+            $this->fieldData['post_type'] = array($this->fieldData['post_type']);
+        }
+
+        if (isset($this->fieldData['post_id']) && !is_array($this->fieldData['post_id'])) {
+            $this->fieldData['post_id'] = array($this->fieldData['post_id']);
+        }
+
+        if (empty($this->fieldData['callback_args'])) {
+            $this->fieldData['callback_args'] = $this->fieldData;
+        }
+
         return $this;
     }
 
+
+    /**
+     * Get Field data
+     *
+     * @return array
+     */
+    public function getFieldData()
+    {
+        return $this->fieldData;
+    }
 
     /**
      * Store field data into database
@@ -180,7 +219,17 @@ class Base extends SplObjectStorage
         $content .= $this->renderBeforeInput();
         $content .= $this->fieldData['multi'] ? $this->renderMultiField() : $this->renderSingleField();
         $content .= $this->renderAfterInput();
+
         return $content;
+    }
+
+
+    /**
+     * Render and show field
+     */
+    public function show()
+    {
+        echo $this->render();
     }
 
     /**
@@ -190,17 +239,15 @@ class Base extends SplObjectStorage
      */
     protected function renderSingleField()
     {
-        $attributes = $this->getAttributes();
-        $template = $this->templateName ? : Themety::fromCamelCase(array_pop(explode('\\', get_class($this))));
-
-        $content = $this->view($template, array_merge([
+        $content = $this->view($this->getTemplate(), array_merge([
             'data' => $this->fieldData,
             'value' => $this->current(),
-            'attributes' => $attributes
+            'attributes' => $this->getAttributes(),
         ], $this->templateParams()));
 
         return $content;
     }
+
 
     /**
      * Render several fields
@@ -252,22 +299,20 @@ class Base extends SplObjectStorage
         return '';
     }
 
+
     /**
-     * Merge data with default values
+     * Get template name
+     *
+     * @return string
      */
-    protected function prepareData()
+    protected function getTemplate()
     {
-        $this->fieldData;
-        $attributes = empty($this->defaults['attributes']) ? array() : $this->defaults['attributes'];
-        $this->fieldData = array_merge($this->defaults, $this->fieldData);
-        foreach ($attributes as $key => $value) {
-            if (!array_key_exists($key, $this->fieldData['attributes'])) {
-                $this->fieldData['attributes'][$key] = $value;
-            }
-        }
-        $this->fieldData['attributes']['name'] = $this->getNameAttribute();
-        return $this->fieldData;
+        $class = explode('\\', get_class($this));
+        $name = array_pop($class);
+        $template = $this->templateName ? : Themety::fromCamelCase($name);
+        return $template;
     }
+
 
     /**
      * Send additional parameters to template
@@ -287,7 +332,9 @@ class Base extends SplObjectStorage
     protected function getAttributes()
     {
         $result = array();
+        $this->fieldData['attributes']['name'] = $this->getNameAttribute();
         $attributes = $this->fieldData['attributes'];
+
         foreach ($attributes as $key => $value) {
             $result[] = $key . '="' . $value . '"';
         }
@@ -319,5 +366,30 @@ class Base extends SplObjectStorage
     {
         $this->fieldData['attributes']['name'] = $value;
         return $this;
+    }
+
+    /**
+     * Get defaults
+     *
+     * @param type $id
+     * @param array $data
+     * @return type
+     */
+    public function getDefaults()
+    {
+        return array(
+            'id' => null,
+            'title' => '',
+            'callback' => array($this, 'show'),
+            'callback_args' => null,
+            'context' => 'advanced',
+            'priority' => 'default',
+            'post_type' => false,
+            'post_id' => false,
+            'description' => '',
+            'field_type' => 'text',
+            'attributes' => array(),
+            'multi' => false,
+        );
     }
 }

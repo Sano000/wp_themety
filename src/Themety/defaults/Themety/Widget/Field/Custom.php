@@ -2,7 +2,7 @@
 
 namespace Themety\Widget\Field;
 
-class Custom extends Base
+class Custom extends BaseWidgetField
 {
 
     protected $defaults = array(

@@ -3,14 +3,10 @@
 namespace Themety\Theme;
 
 use Exception;
+use Illuminate\Support\Facades\Config;
 
-use Themety\Base;
-use Themety\Traits\AddActions;
-
-use Themety\Themety;
-
-class Styles extends Base {
-    use AddActions;
+class Styles
+{
 
     /**
      * Styles
@@ -27,29 +23,28 @@ class Styles extends Base {
      */
     protected $canBeAdded = true;
 
-    public function __construct()
-    {
-        $this->bindAddActions();
 
-        $options = Themety::get('theme', 'styles', array());
+    public function load()
+    {
+        $options = Config::get('theme.styles', array());
         foreach ($options as $handle => $values) {
-            $this->register($handle, $values);
+            $this->add($handle, $values);
         }
     }
 
 
 
     /**
-     * Register style
+     * Add style
      *
      * @param string $handle
-     * @param mixed $values
+     * @param mixed $values   http://codex.wordpress.org/Function_Reference/wp_enqueue_style
      * @return \Themety\Theme\Styles
      */
-    public function register($handle, $values)
+    public function add($handle, $values)
     {
         if (!$this->canBeAdded) {
-            throw new Exception("Too late to register a style: $handle");
+            throw new Exception("Too late to add a style: $handle");
         }
 
         $this->styles[$handle] = $this->parseItem($handle, $values);
@@ -57,11 +52,26 @@ class Styles extends Base {
     }
 
 
+    /**
+     * Include all registered styles
+     *
+     * @param string $zone
+     */
+    public function register($zone = 'frontend') {
+        foreach ($this->styles as $data) {
+            if ($data && in_array($data['zone'], array($zone, 'both'))) {
+                $this->registerStyle($data);
+            }
+        }
+        $this->canBeAdded = false;
+    }
+
+
 
     /**
      * Add single stylesheet
      */
-    protected function includeStyle($data)
+    protected function registerStyle($data)
     {
         wp_enqueue_style(
             $data['handle'],
@@ -72,24 +82,6 @@ class Styles extends Base {
         );
         return $this;
     }
-
-
-    /**
-     * Include all registered styles
-     *
-     * @param string $zone
-     * @return \Themety\Theme\Styles
-     */
-    protected function includeAll($zone = 'frontend') {
-        foreach ($this->styles as $data) {
-            if ($data && in_array($data['zone'], array($zone, 'both'))) {
-                $this->includeStyle($data);
-            }
-        }
-
-        return $this;
-    }
-
 
 
     /**
@@ -110,7 +102,7 @@ class Styles extends Base {
             ), $values);
 
         if (!empty($values['src']) && !preg_match('/^(http|https|\/)/i', $values['src'])) {
-            $values['src'] = Themety::get('core', 'templateUri') . '/' . $values['src'];
+            $values['src'] = Config::get('templateUri') . '/' . $values['src'];
         }
 
         if (!empty($values['deps']) && !is_array($values['deps']) ) {
@@ -118,31 +110,5 @@ class Styles extends Base {
         }
 
         return $values;
-    }
-
-
-
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     *                                                                                                  ACTIONS
-     -----------------------------------------------------------------------------------------------------------------*/
-
-    /**
-     * Add style in a frontend side
-     */
-    public function onWpEnqueueScripts()
-    {
-        $this->includeAll('frontend');
-        $this->canBeAdded = false;
-    }
-
-
-    /**
-     * Add styles in the admin side
-     */
-    public function onAdminEnqueueScripts()
-    {
-        $this->includeAll('backend');
-        $this->canBeAdded = false;
     }
 }

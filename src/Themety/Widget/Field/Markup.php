@@ -2,7 +2,7 @@
 
 namespace Themety\Widget\Field;
 
-class Markup extends Base
+class Markup extends BaseWidgetField
 {
 
     protected $defaults = array(

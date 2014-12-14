@@ -1,13 +1,14 @@
 <?php
 
-namespace Themety\Metabox\Field;
+namespace Themety\Content\Metabox\Field;
 
-class Text extends Base
+class Textarea extends BaseMetaField
 {
 
     protected $defaults = array(
         'attributes' => array(
             'class' => 'widefat',
+            'rows' => 10,
         ),
     );
 }

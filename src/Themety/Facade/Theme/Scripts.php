@@ -2,13 +2,13 @@
 
 namespace Themety\Facade\Theme;
 
-use Themety\Facade\Base;
+use Illuminate\Support\Facades\Facade;
 
-class Scripts extends Base {
+class Scripts extends Facade {
 
      public static function getFacadeAccessor()
      {
-        return 'Themety\Theme\Scripts';
+        return 'theme.scripts';
      }
 
 }

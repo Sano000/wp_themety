@@ -1,16 +1,12 @@
 <?php
 
-namespace Themety;
+namespace Themety\Shortcodes;
 
 use Exception;
+use Illuminate\Support\Facades\Config;
 
-use Themety\Traits\AddActions;
-
-use Themety\Themety;
-
-class Shortcodes extends Base
+class Shortcodes
 {
-    use AddActions;
 
 
     /**
@@ -29,24 +25,22 @@ class Shortcodes extends Base
     protected $canBeRegistrated = true;
 
 
-    public function __construct()
+    public function load()
     {
-        $this->bindAddActions();
-
         foreach ($this->getSettings() as $className) {
-            $this->register($className);
+            $this->add($className);
         }
     }
 
 
     /**
-     * Register a shortcode class
+     * Add a shortcode class
      *
      * @param string $className
      */
-    protected function register($className) {
+    protected function add($className) {
         if (!$this->canBeRegistrated) {
-            throw new Exception("Too late to register a new shorcode class: $className");
+            throw new Exception("Too late to add a new shorcode class: $className");
         }
 
         $this->shortcodes[$className] = null;
@@ -56,15 +50,15 @@ class Shortcodes extends Base
 
     protected function getSettings()
     {
-        $settings = Themety::get('shortcodes');
+        $settings = Config::get('shortcodes');
         $settings['load'] = empty($settings['load']) ? 'all' : $settings['load'];
         $settings['classes'] = array();
 
         $paths = array(
-            Themety::get('core', 'appPath') . '/Themety/Shortcodes'
+            Config::get('appPath') . 'Themety/Shortcodes'
         );
         foreach ($paths as $basePath) {
-            $dir = realpath($basePath . '/' . $this->shortcodesPath);
+            $dir = realpath($basePath);
             if (!is_dir($dir)) {
                 continue;
             }
@@ -90,18 +84,16 @@ class Shortcodes extends Base
                 }
             }
         }
+
         return $settings['classes'];
     }
 
 
 
-    /**-----------------------------------------------------------------------------------------------------------------
-     *                                                                                                  ACTIONS
-     -----------------------------------------------------------------------------------------------------------------*/
     /**
      * Initialize shortcodes
      */
-    public function onInit()
+    public function register()
     {
         foreach ($this->shortcodes as $className => $value) {
             $this->shortcodes[$className] = new $className();

@@ -1,14 +1,13 @@
 <?php
 
-namespace Themety\Metabox\Field;
+namespace Themety\Content\Metabox\Field;
 
-class Textarea extends Base
+class Checkbox extends BaseMetaField
 {
 
     protected $defaults = array(
         'attributes' => array(
             'class' => 'widefat',
-            'rows' => 10,
         ),
     );
 }

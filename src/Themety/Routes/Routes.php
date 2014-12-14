@@ -1,18 +1,13 @@
 <?php
 
-namespace Themety;
+namespace Themety\Routes;
 
 use Exception;
-
-use Themety\Traits\AddActions;
-
-use Themety\Themety;
 use Themety\Tools\Options;
+use Illuminate\Support\Facades\Config;
 
-class Routes extends Base
+class Routes
 {
-    use AddActions;
-
     /**
      * Rewrite rules
      *
@@ -28,29 +23,27 @@ class Routes extends Base
     protected $ruleCanBeRegistrated = true;
 
 
-    public function __construct()
+    public function load()
     {
-        $this->bindAddActions();
-
-        $rules = Themety::get('routes', 'rules', array());
+        $rules = Config::get('routes.rules', array());
         foreach ($rules as $key => $item) {
-            $this->register($key, $item);
+            $this->add($key, $item);
         }
     }
 
 
 
     /**
-     * Register a new rewrite rule
+     * Add a new rewrite rule
      *
      * @param string $key
      * @param array $data
      * @return \Themety\Routes
      */
-    public function register($key, array $data)
+    public function add($key, array $data)
     {
         if (!$this->ruleCanBeRegistrated) {
-            throw new Exception("Too late to register a new rewrite rule");
+            throw new Exception("Too late to add a new rewrite rule");
         }
 
         $this->rules[$key] = $this->parseRule($key, $data);
@@ -95,11 +88,7 @@ class Routes extends Base
     }
 
 
-    /**-----------------------------------------------------------------------------------------------------------------
-     *                                                                                                  ACTIONS
-     -----------------------------------------------------------------------------------------------------------------*/
-
-    public function onInitP99()
+    public function register()
     {
         $str = '';
         foreach ($this->rules as $item) {
@@ -117,7 +106,7 @@ class Routes extends Base
     }
 
 
-    public function onParseRequest($wp)
+    public function parseQuery($wp)
     {
         $action = isset($wp->query_vars['themety_action']) ? $wp->query_vars['themety_action'] : null;
 
@@ -131,7 +120,7 @@ class Routes extends Base
     }
 
 
-    public function onQueryVars($vars)
+    public function updateQueryVars($vars)
     {
         $vars[] = 'themety_action';
         $vars[] = 'themety_var';

@@ -2,7 +2,8 @@
 
 namespace Themety\Model\Tools;
 
-use Themety\Themety;
+use Themety\Facade\Themety;
+use Illuminate\Support\Facades\Config;
 use Themety\Metabox\Field\Base as BaseField;
 
 class MetaBox {
@@ -81,7 +82,7 @@ class MetaBox {
      */
     protected function initScheme()
     {
-        $items = Themety::get('contents', 'meta_boxes', array());
+        $items = Config::get('contents.meta_boxes', array());
         $this->scanSettings($items);
 
         return $this;
@@ -96,9 +97,16 @@ class MetaBox {
      */
     protected function scanSettings(array $items) {
         foreach ($items as $key => $value) {
-            $this->fields[$key] = $this->getFieldObj($key, $value);
-            if (isset($value['items']) && is_array($value['items'])) {
-                $this->scanSettings($value['items']);
+            if (
+                isset($value['post_type']) &&
+                ($value['post_type'] == $this->post->post_type ||
+                    (is_array($value['post_type']) && in_array($this->post->post_type, $value['post_type']))
+                )
+            ) {
+                $this->fields[$key] = $this->getFieldObj($key, $value);
+                if (isset($value['items']) && is_array($value['items'])) {
+                    $this->scanSettings($value['items']);
+                }
             }
         }
         return $this;
@@ -114,14 +122,18 @@ class MetaBox {
      */
     protected function getFieldObj($id, array $fieldData = array())
     {
-
         if (empty($fieldData)) {
-            $class = 'Themety\Metabox\Field\Base';
+            $alias = 'metabox.field.base';
         } else {
-            $class = 'Themety\Metabox\Field\\' . Themety::toCamelCase($fieldData['field_type'], true);
+            $alias = 'metabox.field.' . $fieldData['field_type'];
         }
         $fieldData['id'] = $id;
 
-        return new $class($this->post, $fieldData);
+        $field = Themety::make($alias);
+        $field->setPost($this->post);
+        $field->setFieldData($fieldData);
+        $field->fill();
+
+        return $field;
     }
 }

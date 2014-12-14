@@ -2,7 +2,7 @@
 
 namespace Themety\Shortcodes;
 
-class Widgets extends Base
+class Widgets extends BaseShortcode
 {
 
     public function scSidebar($attr = array(), $content = null)

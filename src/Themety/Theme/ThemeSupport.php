@@ -3,23 +3,17 @@
 namespace Themety\Theme;
 
 use Exception;
+use Illuminate\Support\Facades\Config;
 
-use Themety\Traits\AddActions;
-
-use Themety\Base;
-use Themety\Themety;
-
-class ThemeSupport extends Base {
-    use AddActions;
+class ThemeSupport
+{
 
     protected $features = array();
     protected $afterSetupThemeCalled = false;
 
-    public function __construct()
+    public function load()
     {
-        $this->bindAddActions();
-
-        $options = Themety::get('theme', 'theme_support', array());
+        $options = Config::get('theme.theme_support', array());
         foreach ($options as $key => $value) {
             if (is_numeric($key)) {
                 $this->register($value);
@@ -31,12 +25,12 @@ class ThemeSupport extends Base {
 
 
     /**
-     * Add theme support
+     * Add theme support item
      *
      * @param string $feature
      * @param array $arguments
      */
-    public function register($feature, $arguments = array()) {
+    public function add($feature, $arguments = array()) {
         if ($this->afterSetupThemeCalled) {
             throw new Exception("Theme support should be set within the 'after_setup_theme' event");
         }
@@ -51,10 +45,10 @@ class ThemeSupport extends Base {
     }
 
 
-    /**-----------------------------------------------------------------------------------------------------------------
-     *                                                                                                           ACTIONS
-     -----------------------------------------------------------------------------------------------------------------*/
-    public function onAfterSetupThemeP99()
+    /**
+     *
+     */
+    public function register()
     {
         $this->afterSetupThemeCalled = true;
     }

@@ -2,7 +2,7 @@
 
 namespace Themety\Widget\Field;
 
-class Image extends Base
+class Image extends BaseWidgetField
 {
 
     public function renderBeforeInput($data)

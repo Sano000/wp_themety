@@ -2,7 +2,7 @@
 
 namespace Themety\Widget;
 
-class Test extends Base
+class Test extends BaseWidget
 {
 
     protected $widgetId = 'test';

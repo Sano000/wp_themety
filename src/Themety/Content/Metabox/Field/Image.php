@@ -1,8 +1,8 @@
 <?php
 
-namespace Themety\Metabox\Field;
+namespace Themety\Content\Metabox\Field;
 
-class Image extends Base
+class Image extends BaseMetaField
 {
     protected $itemClass = 'Themety\Tools\Image';
 

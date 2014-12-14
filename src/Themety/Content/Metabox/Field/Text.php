@@ -1,8 +1,8 @@
 <?php
 
-namespace Themety\Metabox\Field;
+namespace Themety\Content\Metabox\Field;
 
-class Checkbox extends Base
+class Text extends BaseMetaField
 {
 
     protected $defaults = array(

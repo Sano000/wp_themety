@@ -2,11 +2,10 @@
 
 namespace Themety\Widget;
 
+use WP_Widget;
 use Themety\Traits\View;
 
-use WP_Widget;
-
-abstract class Base extends WP_Widget
+abstract class BaseWidget extends WP_Widget
 {
     use View;
 

@@ -2,13 +2,12 @@
 
 namespace Themety\Facade\Theme;
 
-use Themety\Facade\Base;
+use Illuminate\Support\Facades\Facade;
 
-class Styles extends Base {
+class Styles extends Facade {
 
      public static function getFacadeAccessor()
      {
-        return 'Themety\Theme\Styles';
+        return 'theme.styles';
      }
-
 }

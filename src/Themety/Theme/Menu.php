@@ -3,14 +3,10 @@
 namespace Themety\Theme;
 
 use Exception;
+use Illuminate\Support\Facades\Config;
 
-use Themety\Base;
-use Themety\Traits\AddActions;
-use Themety\Themety;
-
-class Menu extends Base {
-    use AddActions;
-
+class Menu
+{
     /**
      * Registered menus
      *
@@ -25,13 +21,11 @@ class Menu extends Base {
      */
     protected $canRegister = true;
 
-    public function __construct()
+    public function load()
     {
-        $this->bindAddActions();
-
-        $options = Themety::get('theme', 'menus', array());
+        $options = Config::get('theme.menus', array());
         foreach ($options as $key => $value) {
-            $this->register($key, $value);
+            $this->add($key, $value);
         }
     }
 
@@ -43,10 +37,10 @@ class Menu extends Base {
      * @param string $description
      * @return \Themety\Theme\Menu
      */
-    public function register($name, $description = '')
+    public function add($name, $description = '')
     {
         if (!$this->canRegister) {
-            throw new Exception("Too late to register menu: $name");
+            throw new Exception("Too late to add menu: $name");
         }
 
         $this->menus[$name] = $description;
@@ -54,13 +48,10 @@ class Menu extends Base {
     }
 
 
-    /**-----------------------------------------------------------------------------------------------------------------
-     *
-     -----------------------------------------------------------------------------------------------------------------*/
     /**
      * Register WP menus
      */
-    public function onInit()
+    public function register()
     {
         $this->menus && register_nav_menus($this->menus);
         $this->canRegister = false;

@@ -1,8 +1,8 @@
 <?php
 
-namespace Themety\Metabox\Field;
+namespace Themety\Content\Metabox\Field;
 
-class Numeric extends Base
+class Numeric extends BaseMetaField
 {
 
     protected $defaults = array(

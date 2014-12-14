@@ -3,14 +3,10 @@
 namespace Themety\Theme;
 
 use Exception;
+use Illuminate\Support\Facades\Config;
 
-use Themety\Base;
-use Themety\Traits\AddActions;
-use Themety\Themety;
-
-class Sidebar extends Base {
-    use AddActions;
-
+class Sidebar
+{
     /**
      * Sidebar areas
      *
@@ -26,32 +22,42 @@ class Sidebar extends Base {
     protected $canBeRegistered = true;
 
 
-    public function __construct()
+    public function load()
     {
-        $this->bindAddActions();
-
-        $options = Themety::get('theme', 'sidebars', array());
+        $options = Config::get('theme.sidebars', array());
         foreach ($options as $key => $values) {
-            $this->register($key, $values);
+            $this->add($key, $values);
         }
     }
 
 
     /**
-     * Register sidebar
+     * Add a sidebar
      *
      * @param string $key
      * @param mixed $values
      * @return \Themety\Theme\Sidebar
      */
-    public function register($key, $values)
+    public function add($key, $values)
     {
         if (!$this->canBeRegistered) {
-            throw new Exception("Too late to register sidebar $key");
+            throw new Exception("Too late to add a sidebar $key");
         }
 
         $this->sidebars[$key] = $this->prepareItem($key, $values);
         return $this;
+    }
+
+
+    /**
+     * Register WP sidebars
+     */
+    public function register()
+    {
+        foreach ($this->sidebars as $item) {
+            register_sidebar($item);
+        }
+        $this->canBeRegistered = false;
     }
 
 
@@ -73,22 +79,6 @@ class Sidebar extends Base {
             ), $values);
 
         return $values;
-    }
-
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     *                                                                                              ACTIONS
-     -----------------------------------------------------------------------------------------------------------------*/
-
-    /**
-     * Register WP sidebars
-     */
-    public function onWidgetsInit()
-    {
-        foreach ($this->sidebars as $item) {
-            register_sidebar($item);
-        }
-        $this->canBeRegistered = false;
     }
 
 }

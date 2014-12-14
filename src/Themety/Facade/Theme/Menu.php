@@ -2,13 +2,13 @@
 
 namespace Themety\Facade\Theme;
 
-use Themety\Facade\Base;
+use Illuminate\Support\Facades\Facade;
 
-class Menu extends Base {
+class Menu extends Facade {
 
      public static function getFacadeAccessor()
      {
-        return 'Themety\Theme\Menu';
+        return 'theme.menu';
      }
 
 }
