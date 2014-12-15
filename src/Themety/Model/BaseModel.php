@@ -7,7 +7,8 @@ use WP_Query;
 use Themety\Model\Tools\QueryBulder;
 use Themety\Model\Tools\Collection;
 
-class BaseModel {
+class BaseModel
+{
 
     /**
      * @var string
@@ -120,7 +121,7 @@ class BaseModel {
         ];
 
         $items = [];
-        foreach($this->query->get_posts() as $post) {
+        foreach ($this->query->get_posts() as $post) {
             $items[] = new $this->modelClass($post);
         }
 
@@ -177,7 +178,8 @@ class BaseModel {
      * @param boolean   $thisClassOnly
      * @return array
      */
-    public static function getQueryLog($field = null, $thisClassOnly = false) {
+    public static function getQueryLog($field = null, $thisClassOnly = false)
+    {
         $result = [];
 
         foreach (self::$logs as $class => $value) {

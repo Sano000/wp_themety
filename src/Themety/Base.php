@@ -8,7 +8,8 @@ abstract class Base
 {
 
 
-    public static function getAssetUri($file, $absolute = true) {
+    public static function getAssetUri($file, $absolute = true)
+    {
         $reflector = new ReflectionClass(get_called_class());
         $fn = pathinfo($reflector->getFileName(), PATHINFO_DIRNAME);
         $fn = preg_replace('/' . preg_quote(__NAMESPACE__) . '$/', '', $fn);
@@ -19,6 +20,4 @@ abstract class Base
         
         return $fn;
     }
-
-
 }

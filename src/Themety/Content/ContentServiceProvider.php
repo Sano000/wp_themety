@@ -47,5 +47,4 @@ class ContentServiceProvider extends BaseServiceProvider
     {
         $this->app['content.metabox']->savePost($postId);
     }
-
 }

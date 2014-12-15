@@ -38,7 +38,8 @@ class Shortcodes
      *
      * @param string $className
      */
-    protected function add($className) {
+    protected function add($className)
+    {
         if (!$this->canBeRegistrated) {
             throw new Exception("Too late to add a new shorcode class: $className");
         }

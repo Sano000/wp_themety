@@ -56,5 +56,4 @@ class Menu
         $this->menus && register_nav_menus($this->menus);
         $this->canRegister = false;
     }
-
 }

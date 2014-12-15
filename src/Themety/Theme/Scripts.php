@@ -57,7 +57,8 @@ class Scripts
      * @param string $zone
      * @return \Themety\Theme\Scripts
      */
-    public function register($zone = 'frontend') {
+    public function register($zone = 'frontend')
+    {
         foreach ($this->scripts as $jsData) {
             if ($jsData && in_array($jsData['zone'], array($zone, 'both'))) {
                 $this->registerScript($jsData);
@@ -92,7 +93,8 @@ class Scripts
     /**
      * Parse settings item
      */
-    protected function parseItem($handle, $values) {
+    protected function parseItem($handle, $values)
+    {
         if (!is_array($values)) {
             $values = array('src' => $values);
         }

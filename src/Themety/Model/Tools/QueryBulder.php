@@ -4,7 +4,8 @@ namespace Themety\Model\Tools;
 
 use Exception;
 
-class QueryBulder {
+class QueryBulder
+{
 
     /**
      * Allowed query values
@@ -57,10 +58,4 @@ class QueryBulder {
     {
         return $this->queryModel->query($this->queryVars);
     }
-
-
-
-
-
-
 }

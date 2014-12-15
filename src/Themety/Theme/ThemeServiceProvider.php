@@ -78,5 +78,4 @@ class ThemeServiceProvider extends BaseServiceProvider
     {
         $this->app['theme.theme_support']->register();
     }
-
 }

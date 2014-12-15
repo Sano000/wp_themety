@@ -5,7 +5,8 @@ namespace Themety;
 use Composer\Script\Event;
 use Exception;
 
-class Tasks {
+class Tasks
+{
 
     protected $tasks = array();
     protected $event;
@@ -74,7 +75,7 @@ class Tasks {
 
             $data = call_user_func(array($class, 'getInfo'));
             foreach ($data as $item) {
-              $this->addCommand($item);
+                $this->addCommand($item);
             }
         }
 
@@ -84,16 +85,19 @@ class Tasks {
     /**
      * Add single themety task
      *
-     * @param task data $command
+     * @param  task data $command
      * @throws Exception
      */
     public function addCommand($command)
     {
-        $data = array_merge(array(
+        $data = array_merge(
+            array(
             'command' => '',
             'title' => '',
             'run' => null,
-        ), $command);
+            ),
+            $command
+        );
 
         if (empty($data['command'])) {
             throw new Exception('Command not set');

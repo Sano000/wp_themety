@@ -79,7 +79,7 @@ class BaseMetaField extends SplObjectStorage
         $value = get_post_meta($this->post->ID, $this->fieldData['id'], true);
         is_array($value) || ($value = array($value));
 
-        foreach($value as $v) {
+        foreach ($value as $v) {
             $this->setValue($v);
         }
         $this->rewind();
@@ -126,7 +126,7 @@ class BaseMetaField extends SplObjectStorage
      */
     public function toArray()
     {
-        if(!$this->fieldData['multi']) {
+        if (!$this->fieldData['multi']) {
             return $this->current()->getValue();
         }
 
@@ -281,7 +281,10 @@ class BaseMetaField extends SplObjectStorage
     protected function renderBeforeInput()
     {
         $content = '<input type="hidden" name="themety_meta_fields[]" '
-            . 'value="' . base64_encode(serialize(array('id' => $this->fieldData['id'], 'class' => get_class($this)))) . '">';
+            . 'value="' . base64_encode(serialize(
+                array(
+                'id' => $this->fieldData['id'], 'class' => get_class($this))
+            )) . '">';
         if ($this->fieldData['description']) {
             $content .= '<label>' . $this->fieldData['description'] . '</label>';
         }
