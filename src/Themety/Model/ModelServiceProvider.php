@@ -10,8 +10,7 @@ class ModelServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->app->bind('model.metabox', function($app, $post)
-        {
+        $this->app->bind('model.metabox', function($app, $post) {
             return new MetaBox($post);
         });
 
@@ -26,6 +25,4 @@ class ModelServiceProvider extends ServiceProvider
         $this->app->bind('metabox.field.select', 'Themety\Content\Metabox\Field\Select');
 
     }
-
-
 }

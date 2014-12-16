@@ -28,7 +28,7 @@ abstract class BaseWidget extends WP_Widget
                     'default' => __('Title'),
                     'label' => __('Title'),
                     'filter' => 'strip_tags',
-            ));
+                ));
             $this->fields = array_merge($title, $this->fields);
 
             foreach ($this->fields as $key => $item) {

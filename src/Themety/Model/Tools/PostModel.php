@@ -4,7 +4,8 @@ namespace Themety\Model\Tools;
 
 use Themety\Facade\Themety;
 
-class PostModel {
+class PostModel
+{
 
     /**
      * @var \WP_Post

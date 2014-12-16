@@ -45,16 +45,15 @@ class Install extends Base
             mkdir($installPath, 0777, true);
         }
 
-        $sourcePath = realpath( __DIR__ . '/../defaults');
+        $sourcePath = realpath(__DIR__ . '/../defaults');
         $objects = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($sourcePath),
             RecursiveIteratorIterator::SELF_FIRST
         );
 
         $skipConf = false;
-        foreach($objects as $name => $object){
-
-            if(!in_array($object->getFilename(), array('.', '..'))) {
+        foreach ($objects as $name => $object) {
+            if (!in_array($object->getFilename(), array('.', '..'))) {
                 $relative = str_replace($sourcePath . DS, '', $name);
                 $target = $installPath . DS . $relative;
 
@@ -67,7 +66,7 @@ class Install extends Base
                     $result = $self->event->getIO()->ask("File $target exists. Overwrite?(y/n/A)", 'a');
                     
                     if ($result == 'n') {
-                       continue;
+                        continue;
                     }
                     if ($result == 'a') {
                         $skipConf = true;
@@ -82,5 +81,4 @@ class Install extends Base
         }
 
     }
-
 }

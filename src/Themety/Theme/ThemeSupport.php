@@ -30,7 +30,8 @@ class ThemeSupport
      * @param string $feature
      * @param array $arguments
      */
-    public function add($feature, $arguments = array()) {
+    public function add($feature, $arguments = array())
+    {
         if ($this->afterSetupThemeCalled) {
             throw new Exception("Theme support should be set within the 'after_setup_theme' event");
         }
@@ -52,5 +53,4 @@ class ThemeSupport
     {
         $this->afterSetupThemeCalled = true;
     }
-
 }

@@ -71,4 +71,3 @@ class PostType
         $this->postTypeCanBeRegistrated = false;
     }
 }
-

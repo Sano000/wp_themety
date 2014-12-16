@@ -35,5 +35,4 @@ class RoutesServiceProvider extends BaseServiceProvider
     {
         return $this->app['routes']->updateQueryVars($vars);
     }
-
 }

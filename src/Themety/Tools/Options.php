@@ -2,9 +2,10 @@
 
 namespace Themety\Tools;
 
-class Options {
+class Options
+{
 
-    static $themety = array();
+    private static $themety = array();
 
     /**
      * Set a option to the wp_themety

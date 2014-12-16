@@ -62,7 +62,8 @@ class Sidebar
 
 
 
-    protected function prepareItem($key, $values) {
+    protected function prepareItem($key, $values)
+    {
         if (!is_array($values)) {
             $values = array('name' => $values);
         }
@@ -80,5 +81,4 @@ class Sidebar
 
         return $values;
     }
-
 }

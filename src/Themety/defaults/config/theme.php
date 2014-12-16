@@ -88,7 +88,7 @@ return array(
      */
     'sidebars' => array(
         'sidebar' => array(
-            'name'          => __( 'Sidebar name', 'theme_text_domain' ),
+            'name'          => __('Sidebar name', 'theme_text_domain'),
             'id'            => 'unique-sidebar-id',
             'description'   => '',
             'class'         => '',
