@@ -2,6 +2,8 @@
 
 namespace Themety;
 
+define('DS', DIRECTORY_SEPARATOR);
+
 use ReflectionClass;
 use Illuminate\Http\Request;
 use Illuminate\Config\FileLoader;
@@ -304,7 +306,10 @@ class Themety extends Container
         $fn = pathinfo($reflector->getFileName(), PATHINFO_DIRNAME);
         $fn = preg_replace('/' . preg_quote(__NAMESPACE__) . '$/', '', $fn);
         $fn = realpath($fn . '..');
-        $fn = preg_replace('/^' . preg_quote(ABSPATH, '/') . '/', '', $fn);
+        $ar1 = explode(DS, $fn);
+        $ar2 = explode(DS, rtrim(ABSPATH, '/'));
+        $diff = array_diff($ar1, $ar2);
+        $fn = implode('/', $diff);
         $fn = "/$fn/assets/$file";
         $absolute && ($fn = get_site_url() . $fn);
         return $fn;
