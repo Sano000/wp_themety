@@ -38,9 +38,11 @@ do ($ = $jq) ->
             multi || $preview.html ''
 
             $item.find('input').val attachment.id
-            $item.find('.preview-img').css({'background-image':'url('+attachment.url+')'})
+            $item.find('.preview-img').css
+              'background-image':'url('+attachment.url+')'
             $item.find('.preview-img').attr 'title', attachment.alt
-            $item.removeClass('hidden').removeClass('template').appendTo $preview
+            $item.removeClass('hidden').removeClass('template')
+            $item.appendTo $preview
             return
 
           file_frame = null
@@ -70,7 +72,7 @@ do ($ = $jq) ->
       $( document ).on 'click', '#widgets-right .widget-control-save', (e) ->
         $container = $( e.target ).closest '.widgets-holder-wrap'
         interval = setInterval(->
-          if !$container.find( '.widget-control-actions .spinner' ).is ':visible'
+          if !$container.find('.widget-control-actions .spinner').is ':visible'
             if $container.find( '.widgets-upload-image[data-multi=1]' ).length
               initUploadSortable $container.find(
                 '.widgets-upload-image[data-multi=1] .preview')
