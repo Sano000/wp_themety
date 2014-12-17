@@ -262,12 +262,19 @@ class BaseMetaField extends SplObjectStorage
             ? count($values) : max(count($values), $this->fieldData['multi']['items']);
 
         $this->rewind();
+        $wrapper_attrs = "wp_themety__meta-multi js-wp_themety__meta-multi";
+        foreach (['collapsible','sortable'] as $attr) {
+            $this->fieldData['multi'][$attr] && $wrapper_attrs .= ' '.$attr;
+        }
+
+        $content .= '<div class="'.$wrapper_attrs.'">';
         for ($n = 0; $n < $items; $n++) {
             $content .= '<div class="input-item">';
             $content .= $this->renderSingleField();
             $content .= '</div>';
             $this->next();
         }
+        $content .= '</div>';
 
         $this->value = $values;
         return $content;
