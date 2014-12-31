@@ -13,12 +13,10 @@ abstract class BaseShortcode
     public function __construct()
     {
         $methods = get_class_methods($this);
-        foreach ($methods as $methods) {
-            if (strpos($methods, 'sc') !== false) {
-                $name = str_replace('sc', '', $methods);
-                $name = Themety::fromCamelCase($name);
-
-                add_shortcode($name, array($this, $methods));
+        foreach ($methods as $method) {
+            if (preg_match('/^sc(\S+)$/', $method, $matches)) {
+                $name = Themety::fromCamelCase($matches[1]);
+                add_shortcode($name, array($this, $method));
             }
         }
     }

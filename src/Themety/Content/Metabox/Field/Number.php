@@ -2,7 +2,7 @@
 
 namespace Themety\Content\Metabox\Field;
 
-class Numeric extends BaseMetaField
+class Number extends BaseMetaField
 {
 
     protected $defaults = array(

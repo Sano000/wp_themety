@@ -25,3 +25,15 @@
   width: 75px;
   height: 75px;
 }
+
+.postbox label {
+  /*display: block;*/
+  /*margin-bottom: 10px;*/
+}
+.postbox label ~ input[type="checkbox"] {
+  float: left;
+  margin: 2px 10px 0 0;
+}
+.postbox label:empty {
+  display: none;
+}

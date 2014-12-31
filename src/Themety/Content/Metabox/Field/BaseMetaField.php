@@ -145,7 +145,7 @@ class BaseMetaField extends SplObjectStorage
      * @param \Themety\Model\Tools\PostModel $post
      * @return \Themety\Content\Metabox\Field\BaseMetaField
      */
-    public function setPost(\Themety\Model\Tools\PostModel $post)
+    public function setPost($post)
     {
         $this->post = $post;
         return $this;
