@@ -38,9 +38,9 @@ class Group extends BaseMetaField
     public function fill()
     {
         $items = empty($this->fieldData['multi']['items']) ? 1 : $this->fieldData['multi']['items'];
-        for($n = 0; $n < $items; $n++) {
+        for ($n = 0; $n < $items; $n++) {
             $data = [];
-            foreach ($this->fieldData['items'] as $key=>$value) {
+            foreach ($this->fieldData['items'] as $key => $value) {
                 $data[$key] = $this->getSubfield($key, $n);
             }
             $this->setValue($data);
@@ -104,8 +104,8 @@ class Group extends BaseMetaField
         $keys = array_keys($this->fieldData['items']);
 
         $this->rewind();
-        foreach($keys as $key) {
-            foreach($this as $n => $item) {
+        foreach ($keys as $key) {
+            foreach ($this as $n => $item) {
                 $result[$n][$key] = $this->getSubfield($key)->getValue();
             }
         }
@@ -127,17 +127,18 @@ class Group extends BaseMetaField
         }
 
         $keys = array_keys($this->fieldData['items']);
-        if(in_array($name, $keys)) {
+        if (in_array($name, $keys)) {
             return $this->getSubfield($name);
         }
         return null;
     }
 
-    public function getValue() {
+    public function getValue()
+    {
         $keys = array_keys($this->fieldData['items']);
         $result = [];
-        foreach($keys as $key) {
-            foreach($this as $n => $item) {
+        foreach ($keys as $key) {
+            foreach ($this as $n => $item) {
                 $result[$key] = $this->getSubfield($key)->getValue();
             }
         }

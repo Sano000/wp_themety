@@ -88,7 +88,7 @@ class Collection implements Iterator, Countable
     public function valid()
     {
         $key = key($this->items);
-        $var = ($key !== NULL && $key !== FALSE);
+        $var = ($key !== null && $key !== false);
         return $var;
     }
 

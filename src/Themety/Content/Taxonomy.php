@@ -70,4 +70,3 @@ class Taxonomy
         $this->taxonomyCanBeRegistrated = false;
     }
 }
-

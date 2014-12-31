@@ -57,7 +57,8 @@ class Styles
      *
      * @param string $zone
      */
-    public function register($zone = 'frontend') {
+    public function register($zone = 'frontend')
+    {
         foreach ($this->styles as $data) {
             if ($data && in_array($data['zone'], array($zone, 'both'))) {
                 $this->registerStyle($data);
@@ -87,7 +88,8 @@ class Styles
     /**
      * Parse settings item
      */
-    protected function parseItem($handle, $values) {
+    protected function parseItem($handle, $values)
+    {
         if (!is_array($values)) {
             $values = array('src' => $values);
         }
@@ -105,7 +107,7 @@ class Styles
             $values['src'] = Config::get('templateUri') . '/' . $values['src'];
         }
 
-        if (!empty($values['deps']) && !is_array($values['deps']) ) {
+        if (!empty($values['deps']) && !is_array($values['deps'])) {
             $values['deps'] = explode(',', $values['deps']);
         }
 

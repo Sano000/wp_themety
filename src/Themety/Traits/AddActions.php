@@ -4,8 +4,8 @@ namespace Themety\Traits;
 
 use Themety\Themety;
 
-
-trait AddActions {
+trait AddActions
+{
 
     /**
      * Bind all "on" started function to actions

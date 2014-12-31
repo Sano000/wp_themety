@@ -125,4 +125,3 @@ class Widgets
         return $classes;
     }
 }
-

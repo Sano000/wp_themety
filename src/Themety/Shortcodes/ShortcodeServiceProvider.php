@@ -22,5 +22,4 @@ class ShortcodeServiceProvider extends BaseServiceProvider
     {
         $this->app['shortcode']->register();
     }
-
 }

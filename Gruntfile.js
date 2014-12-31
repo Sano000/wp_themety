@@ -34,14 +34,14 @@ module.exports = function(grunt) {
         expand: true,
         cwd: 'resources/coffee',
         src: ['**/*.coffee', '*.coffee'],
-        dest: 'source/js',
+        dest: 'assets/js',
         ext: '.js',
       },
       compile: {
         expand: true,
         cwd: 'resources/coffee',
         src: ['**/*.coffee', '*.coffee'],
-        dest: 'source/js',
+        dest: 'assets/js',
         ext: '.js',
         filter: isModified
       }

@@ -2,7 +2,8 @@
 
 namespace Themety\Task;
 
-abstract class Base {
+abstract class Base
+{
 
 
 }

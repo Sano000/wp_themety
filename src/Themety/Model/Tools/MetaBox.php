@@ -6,7 +6,8 @@ use Themety\Facade\Themety;
 use Illuminate\Support\Facades\Config;
 use Themety\Metabox\Field\Base as BaseField;
 
-class MetaBox {
+class MetaBox
+{
 
     /**
      * Fields
@@ -56,7 +57,8 @@ class MetaBox {
      * @param string $metaName
      * @return  Themety\Metabox\Field\Base
      */
-    public function get($metaName) {
+    public function get($metaName)
+    {
         $field = empty($this->fields[$metaName]) ? $this->getFieldObj($metaName) : $this->fields[$metaName];
         return $field;
     }
@@ -95,7 +97,8 @@ class MetaBox {
      * @param array $items
      * @return \Themety\Model\Tools\MetaBox
      */
-    protected function scanSettings(array $items) {
+    protected function scanSettings(array $items)
+    {
         foreach ($items as $key => $value) {
             if (
                 isset($value['post_type']) &&
