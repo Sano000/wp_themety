@@ -140,6 +140,11 @@ class MetaBox
     public static function savePost($postId)
     {
         $input = $_POST;
+
+        if ($parentId = wp_is_post_revision($postId)) {
+            $postId = $parentId;
+        }
+
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return;
         }
