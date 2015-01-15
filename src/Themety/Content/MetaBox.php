@@ -102,7 +102,11 @@ class MetaBox
             }
             in_array(get_the_ID(), $value['post_id']) && ($active = true);
 
-            if (isset($value['is_active']) && is_callable($value['is_active']) && call_user_func($value['is_active'])) {
+            if (
+                isset($value['is_active']) &&
+                is_callable($value['is_active']) &&
+                call_user_func($value['is_active'], $post->current())
+            ) {
                 $active = true;
             }
 
