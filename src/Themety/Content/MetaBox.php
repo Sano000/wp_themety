@@ -93,26 +93,20 @@ class MetaBox
         foreach ($this->metaBoxes as $key => $field) {
             $value = $field->getFieldData();
 
-            if (in_array(get_post_type(), $value['post_type'])) {
-                $field->setPost($post->current());
-                $field->fill();
-
-                add_meta_box(
-                    $key,
-                    $value['title'],
-                    $value['callback'],
-                    get_post_type(),
-                    $value['context'],
-                    $value['priority'],
-                    null //$field['callback_args']
-                );
-            }
+            $active = false;
+            in_array(get_post_type(), $value['post_type']) && ($active = true);
 
             $frontpage_id = get_option('page_on_front');
             if (get_the_ID() == $frontpage_id && in_array('front', $value['post_id'])) {
                 $value['post_id'][] = get_the_ID();
             }
-            if (in_array(get_the_ID(), $value['post_id'])) {
+            in_array(get_the_ID(), $value['post_id']) && ($active = true);
+
+            if (isset($value['is_active']) && is_callable($value['is_active']) && call_user_func($value['is_active'])) {
+                $active = true;
+            }
+
+            if ($active) {
                 $field->setPost($post->current());
                 $field->fill();
 
