@@ -5,6 +5,7 @@ namespace Themety\Model\Tools;
 use Themety\Facade\Themety;
 use Illuminate\Support\Facades\Config;
 use Themety\Metabox\Field\Base as BaseField;
+use Themety\Facade\Metabox as ContentMetaBox;
 
 class MetaBox
 {
@@ -101,10 +102,7 @@ class MetaBox
     {
         foreach ($items as $key => $value) {
             if (
-                isset($value['post_type']) &&
-                ($value['post_type'] == $this->post->post_type ||
-                    (is_array($value['post_type']) && in_array($this->post->post_type, $value['post_type']))
-                )
+                ContentMetaBox::isBelongsToPost($value, $this->post)
             ) {
                 $this->fields[$key] = $this->getFieldObj($key, $value);
                 if (isset($value['items']) && is_array($value['items'])) {

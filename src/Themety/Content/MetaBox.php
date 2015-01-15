@@ -93,24 +93,7 @@ class MetaBox
         foreach ($this->metaBoxes as $key => $field) {
             $value = $field->getFieldData();
 
-            $active = false;
-            in_array(get_post_type(), $value['post_type']) && ($active = true);
-
-            $frontpage_id = get_option('page_on_front');
-            if (get_the_ID() == $frontpage_id && in_array('front', $value['post_id'])) {
-                $value['post_id'][] = get_the_ID();
-            }
-            in_array(get_the_ID(), $value['post_id']) && ($active = true);
-
-            if (
-                isset($value['is_active']) &&
-                is_callable($value['is_active']) &&
-                call_user_func($value['is_active'], $post->current())
-            ) {
-                $active = true;
-            }
-
-            if ($active) {
+            if ($this->isBelongsToPost($value, $post)) {
                 $field->setPost($post->current());
                 $field->fill();
 
@@ -128,6 +111,31 @@ class MetaBox
         $this->metaBoxCanBeRegistrated = false;
     }
 
+
+    public function isBelongsToPost(array $field, $post)
+    {
+        $active = false;
+        if (isset($field['post_type'])) {
+            $postTypes = is_array($field['post_type']) ? $field['post_type'] : array($field['post_type']);
+            in_array($post->post_type, $postTypes) && ($active = true);
+        }
+
+        $frontpage_id = get_option('page_on_front');
+        if ($post->ID == $frontpage_id && in_array('front', $field['post_id'])) {
+            $field['post_id'][] = $post->ID;
+        }
+        isset($field['post_id']) && in_array($post->ID, $field['post_id']) && ($active = true);
+
+        if (
+            isset($field['is_active']) &&
+            is_callable($field['is_active']) &&
+            call_user_func($field['is_active'], $post)
+        ) {
+            $active = true;
+        }
+
+        return $active;
+    }
 
 
     /**
