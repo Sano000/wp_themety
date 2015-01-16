@@ -264,7 +264,7 @@ class BaseMetaField extends SplObjectStorage
         $this->rewind();
         $wrapper_attrs = "wp_themety__meta-multi js-wp_themety__meta-multi";
         foreach (['collapsible','sortable'] as $attr) {
-            $this->fieldData['multi'][$attr] && $wrapper_attrs .= ' '.$attr;
+            empty($this->fieldData['multi'][$attr]) || ($wrapper_attrs .= ' '.$attr);
         }
 
         $content .= '<div class="'.$wrapper_attrs.'">';

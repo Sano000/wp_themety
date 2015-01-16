@@ -92,13 +92,13 @@
       handleMutlifields: function() {
         var $multis;
         $multis = $('.js-wp_themety__meta-multi');
-        $multis.each(function(e) {
+        $multis.each(function($el) {
           var collapsible, sortable;
           collapsible = $(this).hasClass('collapsible');
           sortable = $(this).hasClass('sortable');
           if (collapsible || sortable) {
-            $(this).find('.input-item').prepend(function(e) {
-              return '<h3 class="ui-accordion-header">Item ' + e + '</h3>';
+            $(this).find('.input-item').prepend(function(n) {
+              return "<h3 class='ui-accordion-header'>Item " + n + "</h3>";
             });
           }
           if (collapsible) {

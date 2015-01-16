@@ -14,19 +14,19 @@ do ($ = $jq) ->
     uploadImages: ->
       file_frame = null
 
-      $( document ).on 'click', '.widgets-upload-image .add', (e)->
+      $(document).on 'click', '.widgets-upload-image .add', (e)->
         $container = $( e.target ).closest '.widgets-upload-image'
         $preview = $container.find '.preview'
         $template = $container.find '.preview-item.template'
         multi = $container.data('multi') > 0 ? true : false
 
         e.preventDefault()
-        if (file_frame)
+        if file_frame
           file_frame.open()
           return
 
         file_frame = wp.media.frames.file_frame = wp.media
-          title: $container.data('uploader_title')
+          title: $container.data 'uploader_title'
           button:
             text: $container.data 'uploader_button_text'
           multiple: multi
@@ -48,7 +48,7 @@ do ($ = $jq) ->
 
           file_frame = null
           return
-        
+
         file_frame.open()
         return
 
@@ -60,14 +60,14 @@ do ($ = $jq) ->
         $item.slideUp().remove()
         return
 
-      initUploadSortable = ($el) ->
+      initUploadSortable = ($el)->
         $el.sortable
           containment: 'parent'
           cursor: 'move'
           handle: '.preview-img'
         return
 
-      initUploadSortable $( '.widgets-upload-image[data-multi=1] .preview' )
+      initUploadSortable $('.widgets-upload-image[data-multi=1] .preview')
 
       #need to do correctly!!!
       $( document ).on 'click', '#widgets-right .widget-control-save', (e) ->
@@ -90,24 +90,24 @@ do ($ = $jq) ->
     ###
     handleMutlifields: ->
       $multis = $('.js-wp_themety__meta-multi')
-      $multis.each (e)->
-        collapsible = $(this).hasClass('collapsible')
-        sortable = $(this).hasClass('sortable')
-        if collapsible || sortable
-          $(this).find('.input-item').prepend (e) ->
-            '<h3 class="ui-accordion-header">Item ' + e + '</h3>'
+      $multis.each ($el)->
+        collapsible = $(@).hasClass('collapsible')
+        sortable = $(@).hasClass('sortable')
+        if collapsible or sortable
+          $(@).find('.input-item').prepend (n)->
+            "<h3 class='ui-accordion-header'>Item #{n}</h3>"
 
         if collapsible
-          $(this).accordion
+          $(@).accordion
             header: '> div > h3',
             active: 0
-          $(this).accordion "option", "collapsible", true
+          $(@).accordion "option", "collapsible", true
 
         if sortable
-          $(this).sortable
+          $(@).sortable
             containment: 'parent',
             cursor: 'move'
-          $(this).disableSelection()
+          $(@).disableSelection()
 
         return
 
