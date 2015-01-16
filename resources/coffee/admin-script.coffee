@@ -5,6 +5,7 @@ do ($ = $jq) ->
   admin_app = {
     init: ->
       @uploadImages()
+      @handleMutlifields()
       return
 
     ###
@@ -82,6 +83,34 @@ do ($ = $jq) ->
         , 200)
 
         return
+      return
+
+    ###
+    Handle collapsible, sortable multifields
+    ###
+    handleMutlifields: ->
+      $multis = $('.js-wp_themety__meta-multi')
+      $multis.each (e)->
+        collapsible = $(this).hasClass('collapsible')
+        sortable = $(this).hasClass('sortable')
+        if collapsible || sortable
+          $(this).find('.input-item').prepend (e) ->
+            '<h3 class="ui-accordion-header">Item ' + e + '</h3>'
+
+        if collapsible
+          $(this).accordion
+            header: '> div > h3',
+            active: 0
+          $(this).accordion "option", "collapsible", true
+
+        if sortable
+          $(this).sortable
+            containment: 'parent',
+            cursor: 'move'
+          $(this).disableSelection()
+
+        return
+
       return
   }
 

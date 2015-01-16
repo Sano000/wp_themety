@@ -46,7 +46,10 @@ class Widgets
             [
                 'src' => Themety::getAssetUri('js/admin-script.js', true),
                 'zone' => 'backend',
-                'deps' => array('jquery', 'jquery-ui-sortable'),
+                'deps' => array('jquery',
+                    'jquery-ui-sortable',
+                    'jquery-ui-accordion'
+                ),
             ]
         );
 

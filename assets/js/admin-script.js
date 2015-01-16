@@ -8,6 +8,7 @@
     admin_app = {
       init: function() {
         this.uploadImages();
+        this.handleMutlifields();
       },
 
       /*
@@ -82,6 +83,38 @@
               clearInterval(interval);
             }
           }, 200);
+        });
+      },
+
+      /*
+      Handle collapsible, sortable multifields
+       */
+      handleMutlifields: function() {
+        var $multis;
+        $multis = $('.js-wp_themety__meta-multi');
+        $multis.each(function(e) {
+          var collapsible, sortable;
+          collapsible = $(this).hasClass('collapsible');
+          sortable = $(this).hasClass('sortable');
+          if (collapsible || sortable) {
+            $(this).find('.input-item').prepend(function(e) {
+              return '<h3 class="ui-accordion-header">Item ' + e + '</h3>';
+            });
+          }
+          if (collapsible) {
+            $(this).accordion({
+              header: '> div > h3',
+              active: 0
+            });
+            $(this).accordion("option", "collapsible", true);
+          }
+          if (sortable) {
+            $(this).sortable({
+              containment: 'parent',
+              cursor: 'move'
+            });
+            $(this).disableSelection();
+          }
         });
       }
     };

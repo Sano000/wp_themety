@@ -60,6 +60,7 @@ class Group extends BaseMetaField
     {
         $content = '';
         if (isset($this->fieldData['items']) && is_array($this->fieldData['items'])) {
+            $content .= '<div class="multifield-group">';
             foreach ($this->fieldData['items'] as $key => $itemData) {
                 $itemData['id'] = $key;
                 $field = $this->getSubfield($key);
@@ -71,6 +72,7 @@ class Group extends BaseMetaField
                     'renderedInput' => $itemContent,
                 ));
             }
+            $content .= '</div>';
         }
 
         return $content;
