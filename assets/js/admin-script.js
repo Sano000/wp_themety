@@ -8,7 +8,7 @@
     admin_app = {
       init: function() {
         this.uploadImages();
-        this.handleMutlifields();
+        this.handleMultifields();
         this.updateMetaboxArea();
       },
 
@@ -90,51 +90,70 @@
       /*
       Handle collapsible, sortable multifields
        */
-      handleMutlifields: function() {
+      handleMultifields: function() {
         var $multis;
         $multis = $('.js-wp_themety__meta-multi');
-        $multis.each(function($el) {
-          var collapsible, sortable;
-          collapsible = $(this).hasClass('collapsible');
-          sortable = $(this).hasClass('sortable');
+        $multis.each(function(n, el) {
+          var $el, collapsible, sortable;
+          $el = $(el);
+          collapsible = $el.hasClass('collapsible');
+          sortable = $el.hasClass('sortable');
           if (collapsible || sortable) {
-            $(this).find('.input-item').prepend(function(n) {
+            $el.find('.input-item').prepend(function(n) {
               return "<h3 class='ui-accordion-header'>Item " + n + "</h3>";
             });
           }
           if (collapsible) {
-            $(this).accordion({
+            $el.accordion({
               header: '> div > h3',
               active: 0
             });
-            $(this).accordion("option", "collapsible", true);
+            $el.accordion("option", "collapsible", true);
           }
           if (sortable) {
-            $(this).sortable({
+            $el.sortable({
               containment: 'parent',
               cursor: 'move'
             });
-            $(this).disableSelection();
+            $el.disableSelection();
           }
         });
       },
-      updateMetaboxArea: function() {
-        $(document).on('change', '#page_template', function(e) {
-          var pageTemplate, postId;
-          pageTemplate = $(this).val();
-          postId = $('#post_ID[name="post_ID"]:first').val();
-          return $.post(ajaxurl, {
-            action: 'themety_metabox_update',
-            post_id: postId,
-            page_template: pageTemplate
-          }, (function(_this) {
-            return function(resp) {
-              $('#postbox-container-2').html(resp.html);
-              return postboxes.add_postbox_toggles();
-            };
-          })(this));
+      disableMultifieldsHandle: function() {
+        var $multis;
+        $multis = $('.js-wp_themety__meta-multi');
+        return $multis.each(function(n, el) {
+          var $el;
+          $el = $(el);
+          if ($el.is('.iu-accordion')) {
+            $el.accordion('disable');
+          }
+          if ($el.is('.iu-sortable')) {
+            return $el.sortable('disable');
+          }
         });
-      }
+      },
+      updateMetaboxArea: (function(_this) {
+        return function() {
+          $(document).on('change', '#page_template', function(e) {
+            var pageTemplate, postId;
+            pageTemplate = $(this).val();
+            postId = $('#post_ID[name="post_ID"]:first').val();
+            admin_app.disableMultifieldsHandle();
+            return $.post(ajaxurl, {
+              action: 'themety_metabox_update',
+              post_id: postId,
+              page_template: pageTemplate
+            }, (function(_this) {
+              return function(resp) {
+                $('#postbox-container-2').html(resp.html);
+                postboxes.add_postbox_toggles();
+                return admin_app.handleMultifields();
+              };
+            })(this));
+          });
+        };
+      })(this)
     };
     $(document).ready(function() {
       admin_app.init();

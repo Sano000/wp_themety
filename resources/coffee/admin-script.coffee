@@ -5,7 +5,7 @@ do ($ = $jq) ->
   admin_app =
     init: ->
       @uploadImages()
-      @handleMutlifields()
+      @handleMultifields()
       @updateMetaboxArea()
       return
 
@@ -89,39 +89,50 @@ do ($ = $jq) ->
     ###
     Handle collapsible, sortable multifields
     ###
-    handleMutlifields: ->
+    handleMultifields: ->
       $multis = $('.js-wp_themety__meta-multi')
-      $multis.each ($el)->
-        collapsible = $(@).hasClass('collapsible')
-        sortable = $(@).hasClass('sortable')
+      $multis.each (n, el)->
+        $el = $(el)
+        collapsible = $el.hasClass('collapsible')
+        sortable = $el.hasClass('sortable')
         if collapsible or sortable
-          $(@).find('.input-item').prepend (n)->
+          $el.find('.input-item').prepend (n)->
             "<h3 class='ui-accordion-header'>Item #{n}</h3>"
 
         if collapsible
-          $(@).accordion
+          $el.accordion
             header: '> div > h3',
             active: 0
-          $(@).accordion "option", "collapsible", true
+          $el.accordion "option", "collapsible", true
 
         if sortable
-          $(@).sortable
+          $el.sortable
             containment: 'parent',
             cursor: 'move'
-          $(@).disableSelection()
+          $el.disableSelection()
 
         return
-
       return
 
+
+    ## Disable multifields handle
+    ##
+    disableMultifieldsHandle: ->
+      $multis = $('.js-wp_themety__meta-multi')
+      $multis.each (n, el)->
+        $el = $ el
+        $el.accordion('disable') if $el.is('.iu-accordion')
+        $el.sortable('disable') if $el.is('.iu-sortable')
 
     ## Update metabox area
     ##
     ## @return void
-    updateMetaboxArea: ->
+    updateMetaboxArea: =>
       $(document).on 'change', '#page_template', (e)->
         pageTemplate = $(@).val()
         postId = $('#post_ID[name="post_ID"]:first').val()
+
+        admin_app.disableMultifieldsHandle()
 
         $.post ajaxurl,
           action        : 'themety_metabox_update'
@@ -130,6 +141,7 @@ do ($ = $jq) ->
         , (resp)=>
           $('#postbox-container-2').html resp.html
           postboxes.add_postbox_toggles()
+          admin_app.handleMultifields()
       return
 
 
