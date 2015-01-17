@@ -9,6 +9,7 @@
       init: function() {
         this.uploadImages();
         this.handleMutlifields();
+        this.updateMetaboxArea();
       },
 
       /*
@@ -115,6 +116,23 @@
             });
             $(this).disableSelection();
           }
+        });
+      },
+      updateMetaboxArea: function() {
+        $(document).on('change', '#page_template', function(e) {
+          var pageTemplate, postId;
+          pageTemplate = $(this).val();
+          postId = $('#post_ID[name="post_ID"]:first').val();
+          return $.post(ajaxurl, {
+            action: 'themety_metabox_update',
+            post_id: postId,
+            page_template: pageTemplate
+          }, (function(_this) {
+            return function(resp) {
+              $('#postbox-container-2').html(resp.html);
+              return postboxes.add_postbox_toggles();
+            };
+          })(this));
         });
       }
     };

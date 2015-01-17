@@ -86,15 +86,17 @@ class MetaBox
      *
      * @return void
      */
-    public function register()
+    public function register($post_type, $post)
     {
-        $post = Model::get(get_the_ID());
+        if ($post instanceof Model) {
+            $post = $post->current();
+        }
 
         foreach ($this->metaBoxes as $key => $field) {
             $value = $field->getFieldData();
 
-            if ($this->isBelongsToPost($value, $post)) {
-                $field->setPost($post->current());
+            if ($this->isBelongsToPost($value, $post, $post_type)) {
+                $field->setPost($post);
                 $field->fill();
 
                 add_meta_box(
@@ -112,12 +114,18 @@ class MetaBox
     }
 
 
-    public function isBelongsToPost(array $field, $post)
+    public function isBelongsToPost(array $field, $post, $post_type = null)
     {
         $active = false;
+        if (isset($field['template'])) {
+            $templates = is_array($field['template']) ? $field['template'] : array($field['template']);
+            $template = empty($post->template) ? get_page_template_slug($post->ID) : $post->template;
+            in_array($template, $templates) && ($active = true);
+        }
+
         if (isset($field['post_type'])) {
             $postTypes = is_array($field['post_type']) ? $field['post_type'] : array($field['post_type']);
-            in_array($post->post_type, $postTypes) && ($active = true);
+            in_array($post_type, $postTypes) && ($active = true);
         }
 
         $frontpage_id = get_option('page_on_front');

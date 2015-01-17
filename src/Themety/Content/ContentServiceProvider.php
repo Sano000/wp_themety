@@ -3,6 +3,8 @@
 namespace Themety\Content;
 
 use Themety\BaseServiceProvider;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Response;
 
 class ContentServiceProvider extends BaseServiceProvider
 {
@@ -38,13 +40,39 @@ class ContentServiceProvider extends BaseServiceProvider
         $this->app['content.post_type']->register();
     }
 
-    public function onAddMetaBoxes()
+    public function onAddMetaBoxesA2($post_type, $post)
     {
-        $this->app['content.metabox']->register();
+        $this->app['content.metabox']->register($post_type, $post);
     }
 
     public function onSavePost($postId)
     {
         $this->app['content.metabox']->savePost($postId);
+    }
+
+
+    /**-----------------------------------------------------------------------------
+     *                                                  Ajax callbacks
+     -----------------------------------------------------------------------------*/
+    /**
+     * Update metabox forms
+     */
+    public function ajaxThemetyMetaboxUpdate() {
+        $pageTemplate = Input::get('page_template');
+        $id = Input::get('post_id');
+
+        $post = $id ? get_post($id) : (object) [];
+        $post->template = $pageTemplate;
+
+        set_current_screen($post->post_type);
+        do_action('add_meta_boxes', $post->post_type, $post );
+
+        $html = $this->view('content/metabox/ajax-update', [
+            'post' => $post,
+            'post_type' => $post->post_type
+        ]);
+        return Response::json([
+            'html' => $html
+        ]);
     }
 }

@@ -3,6 +3,8 @@
 namespace Themety\Traits;
 
 use Themety\Themety;
+use Illuminate\Support\Facades\Input;
+use Symfony\Component\HttpFoundation\Response;
 
 trait AddActions
 {
@@ -20,11 +22,35 @@ trait AddActions
                 $action = Themety::fromCamelCase($matches[1]);
                 $priority = empty($matches[3]) ? 10 : $matches[3];
                 $arguments = empty($matches[5]) ? 1 : $matches[5];
-                add_action($action, array($this, $method), $priority, $arguments);
+                add_action($action, [$this, $method], $priority, $arguments);
                 $count ++;
+            }
+
+            if (preg_match('/^ajax(Nopriv)?(\S+)$/', $method, $matches)) {
+                $key = Themety::fromCamelCase($matches[2]);
+                $action = "wp_ajax" . ($matches[1] ? '_nopriv' : '') . "_$key";
+                add_action($action, [$this, 'callAjaxAction']);
             }
         }
 
         return $count;
+    }
+
+    /**
+     * Call ajax action
+     */
+    public function callAjaxAction()
+    {
+        $key = Themety::toCamelCase(Input::get('action'), true);
+        $method = is_user_logged_in() ? "ajax$key" : "ajaxNopriv$key";
+
+        $response = call_user_func([$this, $method]);
+
+        if ($response instanceof Response) {
+            $response->send();
+        } else {
+            echo $response;
+        }
+        die();
     }
 }

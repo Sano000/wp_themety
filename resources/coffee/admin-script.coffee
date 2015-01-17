@@ -2,10 +2,11 @@ $jq = jQuery.noConflict()
 
 do ($ = $jq) ->
 
-  admin_app = {
+  admin_app =
     init: ->
       @uploadImages()
       @handleMutlifields()
+      @updateMetaboxArea()
       return
 
     ###
@@ -112,7 +113,25 @@ do ($ = $jq) ->
         return
 
       return
-  }
+
+
+    ## Update metabox area
+    ##
+    ## @return void
+    updateMetaboxArea: ->
+      $(document).on 'change', '#page_template', (e)->
+        pageTemplate = $(@).val()
+        postId = $('#post_ID[name="post_ID"]:first').val()
+
+        $.post ajaxurl,
+          action        : 'themety_metabox_update'
+          post_id       : postId
+          page_template : pageTemplate
+        , (resp)=>
+          $('#postbox-container-2').html resp.html
+          postboxes.add_postbox_toggles()
+      return
+
 
   $( document ).ready ->
     admin_app.init()
