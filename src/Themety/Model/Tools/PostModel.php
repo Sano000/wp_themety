@@ -33,7 +33,7 @@ class PostModel
      */
     public function __get($name)
     {
-        return do_shortcode($this->model->$name);
+        return is_string($this->model->$name) ? do_shortcode($this->model->$name) : $this->model->$name;
     }
 
 
