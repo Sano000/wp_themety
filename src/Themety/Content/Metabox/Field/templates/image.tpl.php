@@ -13,7 +13,7 @@
 
   <div class="preview">
     <?php $value = is_array($value) ? $value : array($value); ?>
-    <?php foreach($value as $image): ?>
+    <?php foreach($this as $image): ?>
       <div class="preview-item">
         <div class="preview-img" style="background-image: url(<?php echo $image->thumbnail->url; ?>)"></div>
         <div class="controls">
