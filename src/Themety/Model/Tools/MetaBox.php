@@ -102,7 +102,7 @@ class MetaBox
     {
         foreach ($items as $key => $value) {
             if (
-                ContentMetaBox::isBelongsToPost($value, $this->post)
+                ContentMetaBox::isBelongsToPost($value, $this->post, $this->post->post_type)
             ) {
                 $this->fields[$key] = $this->getFieldObj($key, $value);
                 if (isset($value['items']) && is_array($value['items'])) {
