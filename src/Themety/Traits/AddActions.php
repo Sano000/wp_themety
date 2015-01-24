@@ -28,8 +28,13 @@ trait AddActions
 
             if (preg_match('/^ajax(Nopriv)?(\S+)$/', $method, $matches)) {
                 $key = Themety::fromCamelCase($matches[2]);
-                $action = "wp_ajax" . ($matches[1] ? '_nopriv' : '') . "_$key";
+                $action = "wp_ajax_$key";
                 add_action($action, [$this, 'callAjaxAction']);
+
+                if ($matches[1]) {
+                    $noPrivAction = "wp_ajax_nopriv_$key";
+                    add_action($noPrivAction, [$this, 'callAjaxAction']);
+                }
             }
         }
 
@@ -42,7 +47,7 @@ trait AddActions
     public function callAjaxAction()
     {
         $key = Themety::toCamelCase(Input::get('action'), true);
-        $method = is_user_logged_in() ? "ajax$key" : "ajaxNopriv$key";
+        $method = method_exists($this, "ajaxNopriv$key") ? "ajaxNopriv$key" : "ajax$key";
 
         $response = call_user_func([$this, $method]);
 
